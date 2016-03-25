@@ -6,5 +6,30 @@ git checkout -b personal/NombreDeUsuario
 Les va a indicar que un new branch se ha creado y para verificar que están posados sobre este branch solo tiene que dar:
 git branch
 
------------------  Trabajando con Git  -------------------------
+3) Una vez creado tiene que hacer: git push --set-upstream origin personal/NombreDeUsuario
+Les va a pedir user y pass de GitHub, lo ponen y refrezcan la pag de GitHub, aparecerá el Branch que uds crearon
 
+-----------------  Trabajando con Git  -------------------------
+Acá lo ideal sería que haya un administrados que cada vez que uds quieran subir una modificación, uds solciten un pull request, yo verifico que esté bien, que nada reviente y lo acepto, pero como me da mucha pereza y no quiero ser Mamá Ganza los voy a hacer a uds administradores para que puedan hacer directamente un push.
+
+Antes de hacer un push deben seguir los siguientes pasos.
+
+1) git pull
+
+Esto va a jalar las diferencias del master y actualizar su branch personal
+
+2) Verificar que lo que hicieron no de conflictos, o sea que si el master está estable y sus cambios hace que no compile significa que sus cambios algo tienen mal, hay que arreglarlo.
+
+3) Una vez que todo compile y sea una maravilla hacen:
+git status 			#Esto les va a mostrar los archivos que han sido modificados y que difieren del master
+
+git add ArchivoModificado	#Con esto ponen en el storage los archivos que se han modificado
+
+git commit -m "Mensaje de 60 caracteres o menos"  #Este mensaje traten de ser explicitos, no pongan solo como "modificaciones" sin decir que carajos se ha modificado.
+
+Por ultimo el más temido de todos:
+
+git push
+
+
+De verdad lean el libro, les va a ayudar montones, no solo para el curso si no en general para los trabajos.
