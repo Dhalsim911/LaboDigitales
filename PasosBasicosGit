@@ -31,5 +31,7 @@ Por ultimo el más temido de todos:
 
 git push
 
+Este push lo que va a hacer es subir a GitHub los cambios de su branch personal, ahora para compartir esos cambios se van a la pagina de GitHub, le dan "New pull request" creal el pull request y le dan Merge, esto hará que sus cambios aparezcan en el master y que todos los podamos ver y hacer pull.
+
 
 De verdad lean el libro, les va a ayudar montones, no solo para el curso si no en general para los trabajos.
