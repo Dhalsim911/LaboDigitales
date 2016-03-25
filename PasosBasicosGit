@@ -1,0 +1,10 @@
+1) Lo ideal sería que leyeral al menos los primeros 4 capitulos del libro de Git, si no acá hay una guía básica que espero que les sirva al menos para las tareas de este curso, si no cualquier cosa me preguntan o le preguntan a San Google.
+
+2) Lo primero es crear su propio branch personal, para esto ejecutan el siguiente comando:
+git checkout -b personal/NombreDeUsuario
+
+Les va a indicar que un new branch se ha creado y para verificar que están posados sobre este branch solo tiene que dar:
+git branch
+
+-----------------  Trabajando con Git  -------------------------
+
