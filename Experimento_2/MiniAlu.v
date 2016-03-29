@@ -19,6 +19,11 @@ wire [3:0]  wOperation;
 reg [15:0]   rResult;
 wire [7:0]  wSourceAddr0,wSourceAddr1,wDestination, wDestinationOld;
 wire [15:0] wPreSourceData0,wPreSourceData1,wSourceData0,wSourceData1,wIPInitialValue,wImmediateValue,wResultOld;
+wire [15:0] wsSourceData0,wsSourceData1; 
+reg [31:0] rsResult;
+assign wsSourceData0 = wSourceData0;
+assign wsSourceData1 = wSourceData1;
+
 
 ROM InstructionRom 
 (
@@ -188,6 +193,14 @@ begin
 		rBranchTaken <= 1'b0;
 		rWriteEnable <= 1'b1;
 		rResult      <= wSourceData1 * wSourceData0;	//Multiplicacion sin signo
+	end
+	//-------------------------------------
+	`SMUL:
+	begin
+		rFFLedEN     <= 1'b0;
+		rBranchTaken <= 1'b0;
+		rWriteEnable <= 1'b1;
+		rsResult     <= wsSourceData1 * wsSourceData0;	//Multiplicacion con signo
 	end
 	//-------------------------------------
 	default:
