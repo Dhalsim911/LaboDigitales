@@ -18,6 +18,7 @@ wire [27:0] wInstruction;
 wire [3:0]  wOperation;
 reg [15:0] rResult16;
 reg [31:0] rResult32;
+<<<<<<< 62390b421e847d14fb4cd58aae1bfd1d5bc43460
 wire [7:0]  wSourceAddr0,wSourceAddr1,wDestination, wDestinationOld;
 wire [15:0] wPreSourceData0,wPreSourceData1;
 reg [7:0] rIMULResult;
@@ -29,6 +30,12 @@ wire [31:0] wPreSourceData0_32, wPreSourceData1_32, wSourceData0_32, wSourceData
 wire signed[15:0] wsSourceData0,wsSourceData1; 
 
 
+=======
+wire [7:0]  wSourceAddr0,wSourceAddr1,wDestination, wDestinationOld;
+wire [15:0] wPreSourceData0,wPreSourceData1,wSourceData0,wSourceData1,wIPInitialValue,wImmediateValue,wResult16Old;
+wire [31:0] wPreSourceData0_32, wPreSourceData1_32, wSourceData0_32, wSourceData1_32, wResult32Old;
+wire signed[15:0] wsSourceData0,wsSourceData1; 
+>>>>>>> Implementacion del ejercicio 1
 assign wsSourceData0 = wSourceData0;
 assign wsSourceData1 = wSourceData1;
 
@@ -57,7 +64,11 @@ RAM_DUAL_READ_PORT_32 DataRam32
 	.iWriteEnable(  rWriteEnable32 ),
 	.iReadAddress0( 8'b00000111 & wInstruction[7:0] ),
 	.iReadAddress1( 8'b00000111 & wInstruction[15:8] ),
+<<<<<<< 62390b421e847d14fb4cd58aae1bfd1d5bc43460
 	.iWriteAddress( (8'b00000111 & wDestination)<< 3 ),
+=======
+	.iWriteAddress( wDestination ),
+>>>>>>> Implementacion del ejercicio 1
 	.iDataIn(       rResult32      ),
 	.oDataOut0(     wPreSourceData0_32 ),
 	.oDataOut1(     wPreSourceData1_32 )
@@ -152,14 +163,22 @@ FFD_POSEDGE_SYNCRONOUS_RESET # ( 8 ) FF_LEDS
 
 assign wImmediateValue = {wSourceAddr1,wSourceAddr0};
 
+<<<<<<< 62390b421e847d14fb4cd58aae1bfd1d5bc43460
 assign wSourceData0_16 = (wSourceAddr0 == wDestinationOld) ? wResult16Old : wPreSourceData0;
 assign wSourceData1_16 = (wSourceAddr1 == wDestinationOld) ? wResult16Old : wPreSourceData1;
+=======
+assign wSourceData0 = (wSourceAddr0 == wDestinationOld) ? wResult16Old : wPreSourceData0;
+assign wSourceData1 = (wSourceAddr1 == wDestinationOld) ? wResult16Old : wPreSourceData1;
+>>>>>>> Implementacion del ejercicio 1
 
 assign wSourceData0_32 = (wSourceAddr0 == wDestinationOld) ? wResult32Old : wPreSourceData0_32;
 assign wSourceData1_32 = (wSourceAddr1 == wDestinationOld) ? wResult32Old : wPreSourceData1_32;
 
+<<<<<<< 62390b421e847d14fb4cd58aae1bfd1d5bc43460
 assign wSourceData0 = (wSourceAddr0[3] == 1) ? wSourceData0_32 : wSourceData0_16;
 assign wSourceData1 = (wSourceAddr1[3] == 1) ? wSourceData1_32 : wSourceData1_16;
+=======
+>>>>>>> Implementacion del ejercicio 1
 
 always @ ( * )
 begin
@@ -268,7 +287,21 @@ begin
 		rWriteEnable <= 1'b0;
 		rWriteEnable32 <= 1'b1;
 		rResult16      <= 0;
+<<<<<<< 62390b421e847d14fb4cd58aae1bfd1d5bc43460
 		rResult32      <= wSourceData1 + wSourceData0;
+=======
+		rResult32      <= wSourceData1_32 + wSourceData0_32;
+	end
+	//-------------------------------------
+	`SUB32:
+	begin
+		rFFLedEN     <= 1'b0;
+		rBranchTaken <= 1'b0;
+		rWriteEnable <= 1'b0;
+		rWriteEnable32 <= 1'b1;
+		rResult16      <= 0;
+		rResult32      <= wSourceData1_32 - wSourceData0_32;
+>>>>>>> Implementacion del ejercicio 1
 	end
 	//-------------------------------------
 	`SUB32:
