@@ -20,5 +20,14 @@
 `define R6 8'd6
 `define R7 8'd7
 
+`define E0 8'd8
+`define E1 8'd9
+`define E2 8'd10
+`define E3 8'd11
+`define E4 8'd12
+`define E5 8'd13
+`define E6 8'd14
+`define E7 8'd15
+
 
 `endif
