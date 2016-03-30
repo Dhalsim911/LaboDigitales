@@ -10,6 +10,11 @@
 `define ADD   4'd5
 `define JMP   4'd6
 `define SUB   4'd7
+`define ADD32   4'd8
+`define SUB32   4'd9
+`define MUL     4'd10
+`define SMUL    4'd11
+
 
 `define R0 8'd0
 `define R1 8'd1
@@ -19,6 +24,15 @@
 `define R5 8'd5
 `define R6 8'd6
 `define R7 8'd7
+
+`define E0 8'd8
+`define E1 8'd9
+`define E2 8'd10
+`define E3 8'd11
+`define E4 8'd12
+`define E5 8'd13
+`define E6 8'd14
+`define E7 8'd15
 
 
 `endif

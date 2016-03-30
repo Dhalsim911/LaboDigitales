@@ -13,9 +13,9 @@ begin
 	case (iAddress)
 
 	0: oInstruction = { `NOP ,24'd4000    };
-	1: oInstruction = { `STO ,`R7,16'd255 };   // save 1 on register R7
-	2: oInstruction = { `STO ,`R3,16'h1   }; 
-	3: oInstruction = { `STO, `R4,16'd333 };
+	1: oInstruction = { `STO ,`R7,16'd2 };   // save 1 on register R7
+	2: oInstruction = { `STO ,`R3,16'hffff   }; 
+	3: oInstruction = { `SMUL, `E0,`R7,`R3 };
 	4: oInstruction = { `STO, `R5,16'd0     };  //j
 //LOOP2:
 	5: oInstruction = { `LED ,8'b0,`R7,8'b0 };
