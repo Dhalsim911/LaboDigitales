@@ -20,6 +20,8 @@ reg [15:0] rResult16;
 reg [31:0] rResult32;
 wire [7:0]  wSourceAddr0,wSourceAddr1,wDestination, wDestinationOld;
 wire [15:0] wPreSourceData0,wPreSourceData1,wSourceData0,wSourceData1,wIPInitialValue,wImmediateValue,wResult16Old;
+wire [7:0] wIMULResult;
+wire wCarry;
 wire [31:0] wPreSourceData0_32, wPreSourceData1_32, wSourceData0_32, wSourceData1_32, wResult32Old;
 wire signed[15:0] wsSourceData0,wsSourceData1; 
 assign wsSourceData0 = wSourceData0;
@@ -272,6 +274,26 @@ begin
 		rResult32      <= wSourceData1_32 - wSourceData0_32;
 	end
 	//-------------------------------------
+	`IMUL:
+	begin
+		rFFLedEN     <= 1'b1;
+		rWriteEnable <= 1'b0;
+		rWriteEnable32 <= 1'b0;
+		rResult16[0]   <= wSourceData1_16[0]&wSourceData0_16[0];
+		assign{wCarry,wIMULResult[1]} <= wSourceData1_16[0]&wSourceData0_16[1] + wSourceData1_16[1]&wSourceData0_16[0];
+		assign{wCarry,wIMULResult[2]} <= wSourceData1_16[0]&wSourceData0_16[2] + wSourceData1_16[1]&wSourceData0_16[1] + wSourceData1_16[2]&wSourceData0_16[0] + wCarry;
+		 assign{wCarry,wIMULResult[3]} <= wSourceData1_16[0]&wSourceData0_16[3] + wSourceData1_16[1]&wSourceData0_16[2] + wSourceData1_16[2]&wSourceData0_16[1]+ wSourceData1_16[3]&wSourceData0_16[0] + wCarry;
+		assign{wCarry,wIMULResult[4]} <= wSourceData1_16[1]&wSourceData0_16[3] + wSourceData1_16[2]&wSourceData0_16[2] + wSourceData1_16[3]&wSourceData0_16[1] + wCarry;
+		assign{wCarry,wIMULResult[5]} <= wSourceData1_16[2]&wSourceData0_16[3] + wSourceData1_16[2]&wSourceData0_16[2] + wCarry;
+		assign{wCarry,wIMULResult[6]} <= wSourceData1_16[3]&wSourceData0_16[3] + wCarry;
+		wIMULResult[7]	<= wCarry;
+		
+		rResult16 <= 16'b0;
+		rResult16 <=wIMULResult;
+		rResult32 <= 0;
+		
+	end	
+	//-------------------------------------	
 	default:
 	begin
 		rFFLedEN     <= 1'b1;
