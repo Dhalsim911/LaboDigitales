@@ -19,11 +19,19 @@ wire [3:0]  wOperation;
 reg [15:0] rResult16;
 reg [31:0] rResult32;
 wire [7:0]  wSourceAddr0,wSourceAddr1,wDestination, wDestinationOld;
+<<<<<<< HEAD
 wire [15:0] wPreSourceData0,wPreSourceData1,wSourceData0,wSourceData1,wIPInitialValue,wImmediateValue,wResult16Old;
 wire [7:0] wIMULResult;
 wire wCarry;
+=======
+wire [15:0] wIPInitialValue,wImmediateValue,wResult16Old;
+wire [15:0] wSourceData0_16, wSourceData1_16, wPreSourceData0,wPreSourceData1;
+wire [31:0] wSourceData0,wSourceData1;
+>>>>>>> Imprimir con Leds la multiplicacion
 wire [31:0] wPreSourceData0_32, wPreSourceData1_32, wSourceData0_32, wSourceData1_32, wResult32Old;
 wire signed[15:0] wsSourceData0,wsSourceData1; 
+
+
 assign wsSourceData0 = wSourceData0;
 assign wsSourceData1 = wSourceData1;
 
@@ -147,12 +155,14 @@ FFD_POSEDGE_SYNCRONOUS_RESET # ( 8 ) FF_LEDS
 
 assign wImmediateValue = {wSourceAddr1,wSourceAddr0};
 
-assign wSourceData0 = (wSourceAddr0 == wDestinationOld) ? wResult16Old : wPreSourceData0;
-assign wSourceData1 = (wSourceAddr1 == wDestinationOld) ? wResult16Old : wPreSourceData1;
+assign wSourceData0_16 = (wSourceAddr0 == wDestinationOld) ? wResult16Old : wPreSourceData0;
+assign wSourceData1_16 = (wSourceAddr1 == wDestinationOld) ? wResult16Old : wPreSourceData1;
 
 assign wSourceData0_32 = (wSourceAddr0 == wDestinationOld) ? wResult32Old : wPreSourceData0_32;
 assign wSourceData1_32 = (wSourceAddr1 == wDestinationOld) ? wResult32Old : wPreSourceData1_32;
 
+assign wSourceData0 = (wSourceAddr0[3] == 1) ? wSourceData0_32 : wSourceData0_16;
+assign wSourceData1 = (wSourceAddr1[3] == 1) ? wSourceData1_32 : wSourceData1_16;
 
 always @ ( * )
 begin
@@ -261,7 +271,7 @@ begin
 		rWriteEnable <= 1'b0;
 		rWriteEnable32 <= 1'b1;
 		rResult16      <= 0;
-		rResult32      <= wSourceData1_32 + wSourceData0_32;
+		rResult32      <= wSourceData1 + wSourceData0;
 	end
 	//-------------------------------------
 	`SUB32:
@@ -271,7 +281,7 @@ begin
 		rWriteEnable <= 1'b0;
 		rWriteEnable32 <= 1'b1;
 		rResult16      <= 0;
-		rResult32      <= wSourceData1_32 - wSourceData0_32;
+		rResult32      <= wSourceData1 - wSourceData0;
 	end
 	//-------------------------------------
 	`IMUL:
