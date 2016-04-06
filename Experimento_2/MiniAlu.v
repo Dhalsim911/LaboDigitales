@@ -19,15 +19,12 @@ wire [3:0]  wOperation;
 reg [15:0] rResult16;
 reg [31:0] rResult32;
 wire [7:0]  wSourceAddr0,wSourceAddr1,wDestination, wDestinationOld;
-<<<<<<< HEAD
-wire [15:0] wPreSourceData0,wPreSourceData1,wSourceData0,wSourceData1,wIPInitialValue,wImmediateValue,wResult16Old;
-wire [7:0] wIMULResult;
-wire wCarry;
-=======
+wire [15:0] wPreSourceData0,wPreSourceData1;
+reg [7:0] rIMULResult;
+reg rCarry;
 wire [15:0] wIPInitialValue,wImmediateValue,wResult16Old;
-wire [15:0] wSourceData0_16, wSourceData1_16, wPreSourceData0,wPreSourceData1;
+wire [15:0] wSourceData0_16, wSourceData1_16;
 wire [31:0] wSourceData0,wSourceData1;
->>>>>>> Imprimir con Leds la multiplicacion
 wire [31:0] wPreSourceData0_32, wPreSourceData1_32, wSourceData0_32, wSourceData1_32, wResult32Old;
 wire signed[15:0] wsSourceData0,wsSourceData1; 
 
@@ -60,7 +57,7 @@ RAM_DUAL_READ_PORT_32 DataRam32
 	.iWriteEnable(  rWriteEnable32 ),
 	.iReadAddress0( 8'b00000111 & wInstruction[7:0] ),
 	.iReadAddress1( 8'b00000111 & wInstruction[15:8] ),
-	.iWriteAddress( wDestination ),
+	.iWriteAddress( (8'b00000111 & wDestination)<< 3 ),
 	.iDataIn(       rResult32      ),
 	.oDataOut0(     wPreSourceData0_32 ),
 	.oDataOut1(     wPreSourceData1_32 )
@@ -287,19 +284,19 @@ begin
 	`IMUL:
 	begin
 		rFFLedEN     <= 1'b1;
-		rWriteEnable <= 1'b0;
+		rWriteEnable <= 1'b1;
 		rWriteEnable32 <= 1'b0;
-		rResult16[0]   <= wSourceData1_16[0]&wSourceData0_16[0];
-		assign{wCarry,wIMULResult[1]} <= wSourceData1_16[0]&wSourceData0_16[1] + wSourceData1_16[1]&wSourceData0_16[0];
-		assign{wCarry,wIMULResult[2]} <= wSourceData1_16[0]&wSourceData0_16[2] + wSourceData1_16[1]&wSourceData0_16[1] + wSourceData1_16[2]&wSourceData0_16[0] + wCarry;
-		 assign{wCarry,wIMULResult[3]} <= wSourceData1_16[0]&wSourceData0_16[3] + wSourceData1_16[1]&wSourceData0_16[2] + wSourceData1_16[2]&wSourceData0_16[1]+ wSourceData1_16[3]&wSourceData0_16[0] + wCarry;
-		assign{wCarry,wIMULResult[4]} <= wSourceData1_16[1]&wSourceData0_16[3] + wSourceData1_16[2]&wSourceData0_16[2] + wSourceData1_16[3]&wSourceData0_16[1] + wCarry;
-		assign{wCarry,wIMULResult[5]} <= wSourceData1_16[2]&wSourceData0_16[3] + wSourceData1_16[2]&wSourceData0_16[2] + wCarry;
-		assign{wCarry,wIMULResult[6]} <= wSourceData1_16[3]&wSourceData0_16[3] + wCarry;
-		wIMULResult[7]	<= wCarry;
+		rResult16[0]   <= wSourceData1[0] & wSourceData0[0];
+		{rCarry, rIMULResult[1]} <= wSourceData1[0] & wSourceData0[1] + wSourceData1[1] & wSourceData0[0];
+		{rCarry, rIMULResult[2]} <= wSourceData1[0] & wSourceData0[2] + wSourceData1[1] & wSourceData0[1] + wSourceData1[2] & wSourceData0[0] + rCarry;
+		{rCarry, rIMULResult[3]} <= wSourceData1[0] & wSourceData0[3] + wSourceData1[1] & wSourceData0[2] + wSourceData1[2] & wSourceData0[1]+ wSourceData1[3] & wSourceData0[0] + rCarry;
+		{rCarry, rIMULResult[4]} <= wSourceData1[1] & wSourceData0[3] + wSourceData1[2] & wSourceData0[2] + wSourceData1[3] & wSourceData0[1] + rCarry;
+		{rCarry, rIMULResult[5]} <= wSourceData1[2] & wSourceData0[3] + wSourceData1[2] & wSourceData0[2] + rCarry;
+		{rCarry, rIMULResult[6]} <= wSourceData1[3] & wSourceData0[3] + rCarry;
+		rIMULResult[7]	<= rCarry;
 		
-		rResult16 <= 16'b0;
-		rResult16 <=wIMULResult;
+		//rResult16 <= 16'b0;
+		rResult16 <= rIMULResult;
 		rResult32 <= 0;
 		
 	end	
