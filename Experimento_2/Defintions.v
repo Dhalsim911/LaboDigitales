@@ -14,6 +14,7 @@
 `define SUB32   4'd9
 `define MUL     4'd10
 `define SMUL    4'd11
+`define IMUL2    4'd12
 
 
 `define R0 8'd0
