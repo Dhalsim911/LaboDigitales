@@ -13,12 +13,9 @@
 `define ADD32   4'd8
 `define SUB32   4'd9
 `define MUL     4'd10
-<<<<<<< 62390b421e847d14fb4cd58aae1bfd1d5bc43460
 `define SMUL    4'd11
 `define IMUL    4'd12
-=======
-`define SMUL    4'd11
->>>>>>> Implementacion del ejercicio 1
+`define IMUL2    4'd13
 
 
 `define R0 8'd0
