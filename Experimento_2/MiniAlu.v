@@ -283,9 +283,12 @@ begin
 	//-------------------------------------
 	`IMUL:
 	begin
-		rFFLedEN     <= 1'b1;
+/*
+		rFFLedEN     <= 1'b0;
+		rBranchTaken <= 1'b0;
 		rWriteEnable <= 1'b1;
 		rWriteEnable32 <= 1'b0;
+
 		rResult16[0]   <= wSourceData1[0] & wSourceData0[0];
 		{rCarry, rIMULResult[1]} <= wSourceData1[0] & wSourceData0[1] + wSourceData1[1] & wSourceData0[0];
 		{rCarry, rIMULResult[2]} <= wSourceData1[0] & wSourceData0[2] + wSourceData1[1] & wSourceData0[1] + wSourceData1[2] & wSourceData0[0] + rCarry;
@@ -298,6 +301,16 @@ begin
 		//rResult16 <= 16'b0;
 		rResult16 <= rIMULResult;
 		rResult32 <= 0;
+*/
+	
+		rFFLedEN     <= 1'b0;
+		rBranchTaken <= 1'b0;
+		rWriteEnable <= 1'b0;
+		rWriteEnable32 <= 1'b1;
+		rResult16      <= 0;
+
+
+
 		
 	end	
 	//-------------------------------------	
