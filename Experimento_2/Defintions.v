@@ -15,7 +15,7 @@
 `define MUL     4'd10
 `define SMUL    4'd11
 `define IMUL    4'd12
-`define MUL_GEN    4'd13
+`define IMUL2    4'd13
 
 
 `define R0 8'd0
