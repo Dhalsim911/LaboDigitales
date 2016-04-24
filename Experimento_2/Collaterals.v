@@ -130,7 +130,7 @@ for (CurrentRow = 0; CurrentRow <= MAX_ROWS-1; CurrentRow = CurrentRow + 1)  //L
 for (CurrentCol = 1; CurrentCol <= MAX_COLS-1; CurrentCol = CurrentCol + 1)
 	begin: MUL_COL
 		for (CurrentRow = 0; CurrentRow <= MAX_ROWS; CurrentRow = CurrentRow + 1)
-			begin			
+			begin: MUL_ROW			
 				if (CurrentRow == (size-2))
 						FULL_ADDER # (1) MyAdder2(
 						.A(MulA[CurrentCol]&MulB[size-1]),
