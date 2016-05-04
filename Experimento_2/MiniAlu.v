@@ -48,18 +48,18 @@ RAM_DUAL_READ_PORT DataRam
 	.oDataOut1(     wPreSourceData1 )
 );
 
-RAM_DUAL_READ_PORT_32 DataRam32
+RAM_DUAL_READ_PORT # (32 , 8 , 8) DataRam32
 (
 	.Clock(         Clock        ),
 	.iWriteEnable(  rWriteEnable32 ),
 	.iReadAddress0( 8'b00000111 & wInstruction[7:0] ),
 	.iReadAddress1( 8'b00000111 & wInstruction[15:8] ),
-	.iWriteAddress( (8'b00000111 & wDestination)<< 3 ),
+	.iWriteAddress( 8'b00000111 & wDestination ),
 	.iDataIn(       rResult32      ),
 	.oDataOut0(     wPreSourceData0_32 ),
 	.oDataOut1(     wPreSourceData1_32 )
 );
-
+/*
 MULT_LUT_16_BITS Mult_LUT_Result
 (
 	.iDato_A( wSourceData1 ),
@@ -73,7 +73,7 @@ MULTIPLIER Imul
 	.wB(wSourceData1),
 	.woResult(wIMult)
 );
-
+*/
 
 assign wIPInitialValue = (Reset) ? 8'b0 : wDestination;
 UPCOUNTER_POSEDGE IP
@@ -249,7 +249,7 @@ begin
 		rResult32      <= 0;
 	end
 	//-------------------------------------
-	`MUL:
+	/*`MUL:
 	begin
 		rFFLedEN     <= 1'b0;
 		rBranchTaken <= 1'b0;
@@ -257,7 +257,7 @@ begin
 		rWriteEnable32 <= 1'b1;
 		rResult16      <= 0;	//Multiplicacion sin signo
 		rResult32      <= wSourceData1 * wSourceData0;
-	end
+	end*/
 	//-------------------------------------
 	`SMUL:
 	begin
@@ -290,7 +290,7 @@ begin
 		rResult32      <= wSourceData1 - wSourceData0;
 	end
 	//-------------------------------------
-	`IMUL:
+	/*`IMUL:
 	begin
 		rFFLedEN     <= 1'b0;
 		rBranchTaken <= 1'b0;
@@ -308,7 +308,7 @@ begin
 		rWriteEnable32 <= 1'b1;
 		rResult16      <= 0;
 		rResult32      <= wMult_LUT_Result;
-	end
+	end*/
 
 //-------------------------------------
 
