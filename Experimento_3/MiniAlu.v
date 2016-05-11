@@ -286,6 +286,11 @@ begin
 		rResult32      <= wSourceData1 - wSourceData0;
 	end
 	//-------------------------------------
+/*	`LCD:
+	begin
+		//cuando la parte 1 este lista acá se va a implementar la 2
+	end  */
+	//-------------------------------------
 	default:
 	begin
 		rFFLedEN     <= 1'b1;
