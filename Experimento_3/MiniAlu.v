@@ -59,21 +59,6 @@ RAM_DUAL_READ_PORT # (32, 8, 8) DataRam32
 	.oDataOut0(     wPreSourceData0_32 ),
 	.oDataOut1(     wPreSourceData1_32 )
 );
-/*
-MULT_LUT_16_BITS Mult_LUT_Result
-(
-	.iDato_A( wSourceData1 ),
-	.iDato_B( wSourceData0),
-	.oResult_Mux( wMult_LUT_Result )
-);
-
-MULTIPLIER Imul
-(
-	.wA(wSourceData0),
-	.wB(wSourceData1),
-	.woResult(wIMult)
-);
-*/
 
 assign wIPInitialValue = (Reset) ? 8'b0 : wDestination;
 UPCOUNTER_POSEDGE IP
@@ -249,16 +234,6 @@ begin
 		rResult32      <= 0;
 	end
 	//-------------------------------------
-	/*`MUL:
-	begin
-		rFFLedEN     <= 1'b0;
-		rBranchTaken <= 1'b0;
-		rWriteEnable <= 1'b0;
-		rWriteEnable32 <= 1'b1;
-		rResult16      <= 0;	//Multiplicacion sin signo
-		rResult32      <= wSourceData1 * wSourceData0;
-	end*/
-	//-------------------------------------
 	`SMUL:
 	begin
 		rFFLedEN     <= 1'b0;
@@ -279,4 +254,29 @@ begin
 		rResult16      <= 0;
 		rResult32      <= wSourceData1 + wSourceData0;
 	end
-	//---------------------------------
+	//-------------------------------------
+	`SUB32:
+	begin
+		rFFLedEN     <= 1'b0;
+		rBranchTaken <= 1'b0;
+		rWriteEnable <= 1'b0;
+		rWriteEnable32 <= 1'b1;
+		rResult16      <= 0;
+		rResult32      <= wSourceData1 - wSourceData0;
+	end
+	//-------------------------------------
+	default:
+	begin
+		rFFLedEN     <= 1'b1;
+		rWriteEnable <= 1'b0;
+		rWriteEnable32 <= 1'b0;
+		rResult16      <= 0;
+		rResult32      <= 0;
+		rBranchTaken <= 1'b0;
+	end	
+	//-------------------------------------	
+	endcase	
+end
+
+
+endmodule
