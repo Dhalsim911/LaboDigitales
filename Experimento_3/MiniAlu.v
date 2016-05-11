@@ -10,7 +10,7 @@ module MiniAlu
  output wire [7:0] oLed
 );
 
-wire [15:0]  wIP,wIP_temp;
+wire [15:0]  wIP,wIP_temp, wRetIP;
 reg         rWriteEnable,rBranchTaken, rWriteEnable32;
 wire [27:0] wInstruction;
 wire [3:0]  wOperation;
@@ -154,6 +154,15 @@ FFD_POSEDGE_SYNCRONOUS_RESET # ( 8 ) FF_LEDS
 	.Enable( rFFLedEN ),
 	.D( wSourceData1 ),
 	.Q( oLed    )
+);
+reg rSave;
+FFD_POSEDGE_SYNCRONOUS_RESET # ( 16 ) FF_RET
+(
+	.Clock(Clock),
+	.Reset(Reset),
+	.Enable(rSave),
+	.D(wIP),
+	.Q(wRetIP)
 );
 
 assign wImmediateValue = {wSourceAddr1,wSourceAddr0};
