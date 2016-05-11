@@ -119,6 +119,30 @@ always @ ( * )
 			end
 		end
 //------------------------------------------
+		`STATE_POWERON_INIT_3:
+		begin
+		end
+//------------------------------------------
+		`STATE_POWERON_INIT_4:
+		begin
+		end
+//------------------------------------------
+		`STATE_POWERON_INIT_5:
+		begin
+		end
+//------------------------------------------
+		`STATE_POWERON_INIT_6:
+		begin
+		end
+//------------------------------------------
+		`STATE_POWERON_INIT_7:
+		begin
+		end
+//------------------------------------------
+		`STATE_POWERON_INIT_8:
+		begin
+		end
+//------------------------------------------
 		default:
 		begin
 				rWrite_Enabled = 1'b0;
