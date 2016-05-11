@@ -119,29 +119,104 @@ always @ ( * )
 			end
 		end
 //------------------------------------------
+/*Write SF_D<11:8> = 0x3, pulse LCD_E High for 12 clock cycles
+*/
+		
 		`STATE_POWERON_INIT_3:
 		begin
 		
+			rWrite_Enabled = 1'b1;
+			oLCD_Data = 4'h3;
+			oLCD_RegisterSelect = 1'b0; //these are commands
+			rTimeCountReset = 1'b1;
+			if ( wWriteDone )
+			rNextState = `STATE_POWERON_INIT_4;
+			else
+			rNextState = `STATE_POWERON_INIT_3;
 		end
 //------------------------------------------
+/* Wait 100 us or longer, which is 5,000 clock cycles at 50 MHz.
 		`STATE_POWERON_INIT_4:
 		begin
+			rWrite_Enabled = 1'b0;
+			oLCD_Data = 4'h3;
+			oLCD_RegisterSelect = 1'b0; //these are commands
+			if (rTimeCount > 32'd5000 )
+			begin
+			rTimeCountReset = 1'b1;
+			rNextState = `STATE_POWERON_INIT_5;
+			end
+		else
+			begin
+			rTimeCountReset = 1'b0;
+			rNextState = `STATE_POWERON_INIT_4;
+			end
 		end
 //------------------------------------------
+/*Write SF_D<11:8> = 0x3, pulse LCD_E High for 12 clock cycles
+*/
 		`STATE_POWERON_INIT_5:
 		begin
+			rWrite_Enabled = 1'b1;
+			oLCD_Data = 4'h3;
+			oLCD_RegisterSelect = 1'b0; //these are commands
+			rTimeCountReset = 1'b1;
+			if ( wWriteDone )
+			rNextState = `STATE_POWERON_INIT_6;
+			else
+			rNextState = `STATE_POWERON_INIT_5;
 		end
 //------------------------------------------
+/* Wait 40 us or longer, which is 2,000 clock cycles at 50 MHz.
+*/
 		`STATE_POWERON_INIT_6:
 		begin
+			rWrite_Enabled = 1'b0;
+			oLCD_Data = 4'h3;
+			oLCD_RegisterSelect = 1'b0; //these are commands
+			if (rTimeCount > 32'd2000 )
+			begin
+			rTimeCountReset = 1'b1;
+			rNextState = `STATE_POWERON_INIT_7;
+			end
+		else
+			begin
+			rTimeCountReset = 1'b0;
+			rNextState = `STATE_POWERON_INIT_6;
+			end
 		end
 //------------------------------------------
+/*Write SF_D<11:8> = 0x2, pulse LCD_E High for 12 clock cycles
+*/
 		`STATE_POWERON_INIT_7:
 		begin
+			rWrite_Enabled = 1'b1;
+			oLCD_Data = 4'h2;
+			oLCD_RegisterSelect = 1'b0; //these are commands
+			rTimeCountReset = 1'b1;
+			if ( wWriteDone )
+			rNextState = `STATE_POWERON_INIT_8;
+			else
+			rNextState = `STATE_POWERON_INIT_7;
 		end
 //------------------------------------------
+/* Wait 40 us or longer, which is 2,000 clock cycles at 50 MHz.
+*/
 		`STATE_POWERON_INIT_8:
 		begin
+			rWrite_Enabled = 1'b0;
+			oLCD_Data = 4'h3;
+			oLCD_RegisterSelect = 1'b0; //these are commands
+			if (rTimeCount > 32'd2000 )
+			begin
+			rTimeCountReset = 1'b1;
+			rNextState = `STATE_POWERON_INIT_7;
+			end
+		else
+			begin
+			rTimeCountReset = 1'b0;
+			/*rNextState = `STATE_POWERON_INIT_8;*/
+			end
 		end
 //------------------------------------------
 		default:
