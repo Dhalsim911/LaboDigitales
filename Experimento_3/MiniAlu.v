@@ -25,6 +25,8 @@ wire [31:0] wSourceData0,wSourceData1;
 wire [31:0] wPreSourceData0_32, wPreSourceData1_32, wSourceData0_32, wSourceData1_32, wResult32Old, wMult_LUT_Result;
 wire signed[15:0] wsSourceData0,wsSourceData1; 
 
+wire oLCD_Enabled, oLCD_RegisterSelect, oLCD_StrataFlashControl, oLCD_ReadWrite;
+wire[3:0] oLCD_Data;
 
 assign wsSourceData0 = wSourceData0;
 assign wsSourceData1 = wSourceData1;
@@ -34,6 +36,16 @@ ROM InstructionRom
 (
 	.iAddress(      wIP         ),
 	.oInstruction( wInstruction )
+);
+
+Module_LCD_Control LCD (
+.Clock(Clock),
+.Reset(Reset),
+.oLCD_Enabled(oLCD_Enabled),
+.oLCD_RegisterSelect(oLCD_RegisterSelect), //0=Command, 1=Data
+.oLCD_StrataFlashControl(oLCD_StrataFlashControl),
+.oLCD_ReadWrite(oLCD_ReadWrite),
+.oLCD_Data(oLCD_Data)
 );
 
 RAM_DUAL_READ_PORT DataRam

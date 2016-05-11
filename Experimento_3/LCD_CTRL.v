@@ -35,19 +35,19 @@ wire wWriteDone;
 //----------------------------------------------
 //Next State and delay logic
 always @ ( posedge Clock )
-=
+begin
 		if (Reset)
 			begin
 				rCurrentState = `STATE_RESET;
-				rTimeCount <= 32'b0;
+				rTimeCount = 32'b0;
 			end
 		else
 			begin
 				if (rTimeCountReset)
-				rTimeCount <= 32'b0;
+				rTimeCount = 32'b0;
 			else
-				rTimeCount <= rTimeCount + 32'b1;
-				rCurrentState <= rNextState;
+				rTimeCount = rTimeCount + 32'b1;
+		rCurrentState = rNextState;
 		end
 end
 //----------------------------------------------
