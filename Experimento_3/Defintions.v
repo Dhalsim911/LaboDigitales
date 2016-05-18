@@ -15,6 +15,9 @@
 `define SUB32   4'd9
 `define SMUL    4'd10
 `define SHL    4'd11
+`define CALL    4'd12
+`define RET    4'd13
+
 
 `define R0 8'd0
 `define R1 8'd1
