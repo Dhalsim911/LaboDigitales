@@ -286,6 +286,16 @@ begin
 		rResult32      <= wSourceData1 - wSourceData0;
 	end
 	//-------------------------------------
+		`SHL:
+	begin
+		rFFLedEN     <= 1'b0;
+		rBranchTaken <= 1'b0;
+		rWriteEnable <= 1'b1;
+		rWriteEnable32 <= 1'b0;
+		rResult16      <= wSourceData1 << wSourceData0;
+		rResult32      <= 0;
+	end
+	//-------------------------------------
 /*	`LCD:
 	begin
 		//cuando la parte 1 este lista acá se va a implementar la 2
