@@ -7,7 +7,12 @@ module MiniAlu
 (
  input wire Clock,
  input wire Reset,
- output wire [7:0] oLed
+ output wire [7:0] oLed,
+ output wire oLCD_Enabled,
+ output wire oLCD_RegisterSelect, 
+ output wire oLCD_StrataFlashControl,
+ output wire oLCD_ReadWrite,
+ output wire [3:0] oLCD_Data
 );
 
 wire [15:0]  wIP,wIP_temp, wRetIP;
@@ -24,9 +29,7 @@ wire [15:0] wSourceData0_16, wSourceData1_16;
 wire [31:0] wSourceData0,wSourceData1;
 wire [31:0] wPreSourceData0_32, wPreSourceData1_32, wSourceData0_32, wSourceData1_32, wResult32Old, wMult_LUT_Result;
 wire signed[15:0] wsSourceData0,wsSourceData1; 
-
-wire oLCD_Enabled, oLCD_RegisterSelect, oLCD_StrataFlashControl, oLCD_ReadWrite;
-wire[3:0] oLCD_Data;
+wire wReady;
 
 assign wsSourceData0 = wSourceData0;
 assign wsSourceData1 = wSourceData1;
@@ -41,6 +44,7 @@ ROM InstructionRom
 Module_LCD_Control LCD (
 .Clock(Clock),
 .Reset(Reset),
+.wReady(wReady),
 .oLCD_Enabled(oLCD_Enabled),
 .oLCD_RegisterSelect(oLCD_RegisterSelect), //0=Command, 1=Data
 .oLCD_StrataFlashControl(oLCD_StrataFlashControl),
