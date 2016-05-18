@@ -14,6 +14,7 @@
 `define ADD32   4'd8
 `define SUB32   4'd9
 `define SMUL    4'd10
+`define SHL    4'd11
 
 `define R0 8'd0
 `define R1 8'd1
