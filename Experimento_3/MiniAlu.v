@@ -16,15 +16,15 @@ module MiniAlu
 );
 
 wire [15:0]  wIP,wIP_temp, wRetIP;
-reg         rWriteEnable,rBranchTaken, rWriteEnable32;
+reg         rWriteEnable,rBranchTaken, rWriteEnable32, rRET;
 wire [27:0] wInstruction;
 wire [3:0]  wOperation;
 reg [15:0] rResult16;
 reg [31:0] rResult32;
 wire [7:0]  wSourceAddr0,wSourceAddr1,wDestination, wDestinationOld;
 wire [15:0] wPreSourceData0,wPreSourceData1, wIMult;
-reg [7:0] rIMULResult;
-wire [15:0] wIPInitialValue,wImmediateValue,wResult16Old;
+reg [7:0] rReturn;
+wire [15:0] wIPInitialValue,wImmediateValue,wResult16Old,wIPInitialValue_temp;
 wire [15:0] wSourceData0_16, wSourceData1_16;
 wire [31:0] wSourceData0,wSourceData1;
 wire [31:0] wPreSourceData0_32, wPreSourceData1_32, wSourceData0_32, wSourceData1_32, wResult32Old, wMult_LUT_Result;
@@ -76,7 +76,9 @@ RAM_DUAL_READ_PORT # (32, 8, 8) DataRam32
 	.oDataOut1(     wPreSourceData1_32 )
 );
 
-assign wIPInitialValue = (Reset) ? 8'b0 : wDestination;
+assign wIPInitialValue_temp = (Reset) ? 8'b0 : wDestination;
+assign wIPInitialValue = (rRET) ? rReturn : wIPInitialValue_temp ;
+
 UPCOUNTER_POSEDGE IP
 (
 .Clock(   Clock                ), 
@@ -169,6 +171,8 @@ FFD_POSEDGE_SYNCRONOUS_RESET # ( 16 ) FF_RET
 	.Q(wRetIP)
 );
 
+
+
 assign wImmediateValue = {wSourceAddr1,wSourceAddr0};
 
 assign wSourceData0_16 = (wSourceAddr0 == wDestinationOld) ? wResult16Old : wPreSourceData0;
@@ -193,6 +197,9 @@ begin
 		rWriteEnable32 <= 1'b0;
 		rResult16      <= 0;
 		rResult32      <= 0;
+		rReturn <= 0;
+		rSave <= 0;
+		rRET <= 0;
 	end
 	//-------------------------------------
 	`ADD:
@@ -203,6 +210,9 @@ begin
 		rWriteEnable32 <= 1'b0;
 		rResult16      <= wSourceData1 + wSourceData0;
 		rResult32      <= 0;
+		rReturn <= 0;
+		rSave <= 0;
+		rRET <= 0;
 	end
 	//-------------------------------------
 	`STO:
@@ -213,6 +223,9 @@ begin
 		rWriteEnable32 <= 1'b0;
 		rResult16      <= wImmediateValue;
 		rResult32      <= 0;
+		rReturn <= 0;
+		rSave <= 0;
+		rRET <= 0;
 	end
 	//-------------------------------------
 	`BLE:
@@ -226,7 +239,9 @@ begin
 			rBranchTaken <= 1'b1;
 		else
 			rBranchTaken <= 1'b0;
-		
+		rReturn <= 0;
+		rSave <= 0;
+		rRET <= 0;
 	end
 	//-------------------------------------	
 	`JMP:
@@ -237,6 +252,9 @@ begin
 		rWriteEnable32 <= 1'b0;
 		rResult16      <= 0;
 		rResult32      <= 0;
+		rReturn <= 0;
+		rSave <= 0;
+		rRET <= 0;
 	end
 	//-------------------------------------	
 	`LED:
@@ -247,6 +265,9 @@ begin
 		rWriteEnable32 <= 1'b0;
 		rResult16      <= 0;
 		rResult32      <= 0;
+		rReturn <= 0;
+		rSave <= 0;
+		rRET <= 0;
 	end
 	//-------------------------------------
 	`SUB:
@@ -257,6 +278,9 @@ begin
 		rWriteEnable32 <= 1'b0;
 		rResult16      <= wSourceData1 - wSourceData0;
 		rResult32      <= 0;
+		rReturn <= 0;
+		rSave <= 0;
+		rRET <= 0;
 	end
 	//-------------------------------------
 	`SMUL:
@@ -267,7 +291,9 @@ begin
 		rWriteEnable32 <= 1'b1;
 		rResult16      <= 0;
 		rResult32     <= wsSourceData1 * wsSourceData0;	//Multiplicacion con signo
-		
+		rReturn <= 0;
+		rSave <= 0;
+		rRET <= 0;
 	end
 	//-------------------------------------
 	`ADD32:
@@ -278,6 +304,9 @@ begin
 		rWriteEnable32 <= 1'b1;
 		rResult16      <= 0;
 		rResult32      <= wSourceData1 + wSourceData0;
+		rReturn <= 0;
+		rSave <= 0;
+		rRET <= 0;
 	end
 	//-------------------------------------
 	`SUB32:
@@ -288,6 +317,9 @@ begin
 		rWriteEnable32 <= 1'b1;
 		rResult16      <= 0;
 		rResult32      <= wSourceData1 - wSourceData0;
+		rReturn <= 0;
+		rSave <= 0;
+		rRET <= 0;
 	end
 	//-------------------------------------
 		`SHL:
@@ -298,7 +330,36 @@ begin
 		rWriteEnable32 <= 1'b0;
 		rResult16      <= wSourceData1 << wSourceData0;
 		rResult32      <= 0;
+		rReturn <= 0;
+		rSave <= 0;
+		rRET <= 0;
 	end
+	//-------------------------------------
+		`CALL:
+		begin
+		rFFLedEN     <= 1'b0;
+		rBranchTaken <= 1'b1;
+		rWriteEnable <= 1'b0;
+		rWriteEnable32 <= 1'b0;
+		rResult16      <= 0;
+		rResult32      <= 0;
+		rReturn <= wRetIP + 1;
+		rSave <= 0;
+		rRET <= 0;
+		end
+	//-------------------------------------
+			`RET:
+		begin
+		rFFLedEN     <= 1'b0;
+		rBranchTaken <= 1'b1;
+		rWriteEnable <= 1'b0;
+		rWriteEnable32 <= 1'b0;
+		rResult16      <= 0;
+		rResult32      <= 0;
+		rReturn <= 0;
+		rSave <= 1;
+		rRET <= 1;
+		end
 	//-------------------------------------
 /*	`LCD:
 	begin
