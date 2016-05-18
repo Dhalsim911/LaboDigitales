@@ -31,12 +31,22 @@ module TestBench;
 
 	// Outputs
 	wire [7:0] oLed;
+	wire  oLCD_Enabled;
+	wire  oLCD_RegisterSelect; 
+	wire 	oLCD_StrataFlashControl;
+	wire 	oLCD_ReadWrite;
+	wire	[3:0] oLCD_Data;
 
 	// Instantiate the Unit Under Test (UUT)
 	MiniAlu uut (
 		.Clock(Clock), 
 		.Reset(Reset), 
-		.oLed(oLed)
+		.oLed(oLed),
+		.oLCD_Enabled(oLCD_Enabled),
+		.oLCD_RegisterSelect(oLCD_RegisterSelect),
+		.oLCD_StrataFlashControl(oLCD_StrataFlashControl),
+		.oLCD_ReadWrite(oLCD_ReadWrite),
+		.oLCD_Data(oLCD_Data)
 	);
 	
 	always
