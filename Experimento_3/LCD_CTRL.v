@@ -17,6 +17,7 @@ module Module_LCD_Control
 (
 input wire Clock,
 input wire Reset,
+output reg wReady,
 output reg oLCD_Enabled,
 output reg oLCD_RegisterSelect, //0=Command, 1=Data
 output wire oLCD_StrataFlashControl,
@@ -58,6 +59,7 @@ always @ ( * )
 		//------------------------------------------
 			`STATE_RESET:
 			begin
+				wReady = 1'b0;
 				oLCD_Enabled = 1'b0;
 				oLCD_Data = 4'h0;
 				oLCD_RegisterSelect = 1'b0;
@@ -71,6 +73,7 @@ always @ ( * )
 		*/
 			`STATE_POWERON_INIT_0:
 			begin
+				wReady = 1'b0;
 				oLCD_Enabled = 1'b0;
 				oLCD_Data = 4'h3;
 				oLCD_RegisterSelect = 1'b0; //these are commands
@@ -90,6 +93,7 @@ always @ ( * )
 */
 			`STATE_POWERON_INIT_1:
 			begin
+				wReady = 1'b0;
 				oLCD_Enabled = 1'b1;
 				oLCD_Data = 4'h3;
 				oLCD_RegisterSelect = 1'b0; //these are commands
@@ -110,6 +114,7 @@ always @ ( * )
 */
 		`STATE_POWERON_INIT_2:
 		begin
+			wReady = 1'b0;
 			oLCD_Enabled = 1'b0;
 			oLCD_Data = 4'h3;
 			oLCD_RegisterSelect = 1'b0; //these are commands
@@ -130,7 +135,7 @@ always @ ( * )
 		
 		`STATE_POWERON_INIT_3:
 		begin
-		
+			wReady = 1'b0;
 			oLCD_Enabled = 1'b1;
 			oLCD_Data = 4'h3;
 			oLCD_RegisterSelect = 1'b0; //these are commands
@@ -150,6 +155,7 @@ always @ ( * )
 // Wait 100 us or longer, which is 5,000 clock cycles at 50 MHz.
 		`STATE_POWERON_INIT_4:
 		begin
+			wReady = 1'b0;
 			oLCD_Enabled = 1'b0;
 			oLCD_Data = 4'h3;
 			oLCD_RegisterSelect = 1'b0; //these are commands
@@ -169,6 +175,7 @@ always @ ( * )
 */
 		`STATE_POWERON_INIT_5:
 		begin
+			wReady = 1'b0;
 			oLCD_Enabled = 1'b1;
 			oLCD_Data = 4'h3;
 			oLCD_RegisterSelect = 1'b0; //these are commands
@@ -189,6 +196,7 @@ always @ ( * )
 */
 		`STATE_POWERON_INIT_6:
 		begin
+			wReady = 1'b0;
 			oLCD_Enabled = 1'b0;
 			oLCD_Data = 4'h3;
 			oLCD_RegisterSelect = 1'b0; //these are commands
@@ -208,6 +216,7 @@ always @ ( * )
 */
 		`STATE_POWERON_INIT_7:
 		begin
+			wReady = 1'b0;
 			oLCD_Enabled = 1'b1;
 			oLCD_Data = 4'h2;
 			oLCD_RegisterSelect = 1'b0; //these are commands
@@ -234,10 +243,12 @@ always @ ( * )
 		if (rTimeCount > 32'd2000 )
 			begin
 			rTimeCountReset = 1'b1;
-			rNextState = `STATE_POWERON_INIT_7;
+			wReady = 1'b0;
+			//rNextState = `STATE_POWERON_INIT_7;
 			end
 		else
 			begin
+			wReady = 1'b1;
 			rTimeCountReset = 1'b0;
 			//rNextState = `STATE_POWERON_INIT_8;
 			end
