@@ -77,7 +77,8 @@ RAM_DUAL_READ_PORT # (32, 8, 8) DataRam32
 );
 
 assign wIPInitialValue_temp = (Reset) ? 8'b0 : wDestination;
-assign wIPInitialValue = (rRET) ? rReturn : wIPInitialValue_temp ;
+assign wIPInitialValue = (rRET) ? rReturn : wIPInitialValue_temp;
+
 
 UPCOUNTER_POSEDGE IP
 (
@@ -197,9 +198,8 @@ begin
 		rWriteEnable32 <= 1'b0;
 		rResult16      <= 0;
 		rResult32      <= 0;
-		rReturn <= 0;
-		rSave <= 0;
-		rRET <= 0;
+		rSave <= 1'b1;
+		rRET <= 1'b0;
 	end
 	//-------------------------------------
 	`ADD:
@@ -210,9 +210,8 @@ begin
 		rWriteEnable32 <= 1'b0;
 		rResult16      <= wSourceData1 + wSourceData0;
 		rResult32      <= 0;
-		rReturn <= 0;
-		rSave <= 0;
-		rRET <= 0;
+		rSave <= 1'b1;
+		rRET <= 1'b0;
 	end
 	//-------------------------------------
 	`STO:
@@ -223,9 +222,8 @@ begin
 		rWriteEnable32 <= 1'b0;
 		rResult16      <= wImmediateValue;
 		rResult32      <= 0;
-		rReturn <= 0;
-		rSave <= 0;
-		rRET <= 0;
+		rSave <= 1'b1;
+		rRET <= 1'b0;
 	end
 	//-------------------------------------
 	`BLE:
@@ -239,9 +237,8 @@ begin
 			rBranchTaken <= 1'b1;
 		else
 			rBranchTaken <= 1'b0;
-		rReturn <= 0;
-		rSave <= 0;
-		rRET <= 0;
+		rSave <= 1'b1;
+		rRET <= 1'b0;
 	end
 	//-------------------------------------	
 	`JMP:
@@ -252,9 +249,8 @@ begin
 		rWriteEnable32 <= 1'b0;
 		rResult16      <= 0;
 		rResult32      <= 0;
-		rReturn <= 0;
-		rSave <= 0;
-		rRET <= 0;
+		rSave <= 1'b1;
+		rRET <= 1'b0;
 	end
 	//-------------------------------------	
 	`LED:
@@ -265,9 +261,8 @@ begin
 		rWriteEnable32 <= 1'b0;
 		rResult16      <= 0;
 		rResult32      <= 0;
-		rReturn <= 0;
-		rSave <= 0;
-		rRET <= 0;
+		rSave <= 1'b1;
+		rRET <= 1'b0;
 	end
 	//-------------------------------------
 	`SUB:
@@ -278,9 +273,8 @@ begin
 		rWriteEnable32 <= 1'b0;
 		rResult16      <= wSourceData1 - wSourceData0;
 		rResult32      <= 0;
-		rReturn <= 0;
-		rSave <= 0;
-		rRET <= 0;
+		rSave <= 1'b1;
+		rRET <= 1'b0;
 	end
 	//-------------------------------------
 	`SMUL:
@@ -291,9 +285,8 @@ begin
 		rWriteEnable32 <= 1'b1;
 		rResult16      <= 0;
 		rResult32     <= wsSourceData1 * wsSourceData0;	//Multiplicacion con signo
-		rReturn <= 0;
-		rSave <= 0;
-		rRET <= 0;
+		rSave <= 1'b1;
+		rRET <= 1'b0;
 	end
 	//-------------------------------------
 	`ADD32:
@@ -304,9 +297,8 @@ begin
 		rWriteEnable32 <= 1'b1;
 		rResult16      <= 0;
 		rResult32      <= wSourceData1 + wSourceData0;
-		rReturn <= 0;
-		rSave <= 0;
-		rRET <= 0;
+		rSave <= 1'b1;
+		rRET <= 1'b0;
 	end
 	//-------------------------------------
 	`SUB32:
@@ -317,12 +309,11 @@ begin
 		rWriteEnable32 <= 1'b1;
 		rResult16      <= 0;
 		rResult32      <= wSourceData1 - wSourceData0;
-		rReturn <= 0;
-		rSave <= 0;
-		rRET <= 0;
+		rSave <= 1'b1;
+		rRET <= 1'b0;
 	end
 	//-------------------------------------
-		`SHL:
+	`SHL:
 	begin
 		rFFLedEN     <= 1'b0;
 		rBranchTaken <= 1'b0;
@@ -330,12 +321,11 @@ begin
 		rWriteEnable32 <= 1'b0;
 		rResult16      <= wSourceData1 << wSourceData0;
 		rResult32      <= 0;
-		rReturn <= 0;
-		rSave <= 0;
-		rRET <= 0;
+		rSave <= 1'b1;
+		rRET <= 1'b0;
 	end
 	//-------------------------------------
-		`CALL:
+	`CALL:
 		begin
 		rFFLedEN     <= 1'b0;
 		rBranchTaken <= 1'b1;
@@ -344,11 +334,11 @@ begin
 		rResult16      <= 0;
 		rResult32      <= 0;
 		rReturn <= wRetIP + 1;
-		rSave <= 0;
-		rRET <= 0;
+		rSave <= 1'b0;
+		rRET <= 1'b0;
 		end
 	//-------------------------------------
-			`RET:
+	`RET:
 		begin
 		rFFLedEN     <= 1'b0;
 		rBranchTaken <= 1'b1;
@@ -356,9 +346,8 @@ begin
 		rWriteEnable32 <= 1'b0;
 		rResult16      <= 0;
 		rResult32      <= 0;
-		rReturn <= 0;
-		rSave <= 1;
-		rRET <= 1;
+		rSave <= 1'b1;
+		rRET <= 1'b1;
 		end
 	//-------------------------------------
 /*	`LCD:
@@ -374,6 +363,8 @@ begin
 		rResult16      <= 0;
 		rResult32      <= 0;
 		rBranchTaken <= 1'b0;
+		rSave <= 1'b1;
+		rRET <= 1'b0;
 	end	
 	//-------------------------------------	
 	endcase	
