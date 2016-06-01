@@ -37,5 +37,41 @@
 `define E6 8'd14
 `define E7 8'd15
 
+`define 0 8'b00110000
+`define 1 8'b00110001
+`define 2 8'b00110010
+`define 3 8'b00110011
+`define 4 8'b00110100
+`define 5 8'b00110101
+`define 6 8'b00110110
+`define 7 8'b00110111
+`define 8 8'b00111000
+`define 9 8'b00111001
+`define A 8'b01000001
+`define B 8'b01000010
+`define C 8'b01000011
+`define D 8'b01000100
+`define E 8'b01000101
+`define F 8'b01000110
+`define G 8'b01000111
+`define H 8'b01001000
+`define I 8'b01001001
+`define J 8'b01001010
+`define K 8'b01001011
+`define L 8'b01001100
+`define M 8'b01001101
+`define N 8'b01001110
+`define O 8'b01001111
+`define P 8'b01010000
+`define Q 8'b01010001
+`define R 8'b01010010
+`define S 8'b01010011
+`define T 8'b01010100
+`define U 8'b01010101
+`define V 8'b01010110
+`define W 8'b01010111
+`define X 8'b01011000
+`define Y 8'b01011001
+`define Z 8'b01011010
 
 `endif
