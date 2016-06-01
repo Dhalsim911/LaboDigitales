@@ -2,19 +2,31 @@
 
 module VGA_CONTROLLER
 (
-input wire Clock,
+input wire Clock_25,
 input wire Reset,
 output wire oHS, oVS, oVmemAddress
 );
 
+wire[15:0] wCurrentColumn;
+wire[15:0] wCurrentRow;
+reg rColumnEnd, rRowEnd;
 
 UPCOUNTER_POSEDGE CurrentCol
 (
-.Clock(   Clock2               ), 
-.Reset(   Reset | rBranchTaken ),
-.Initial( wIPInitialValue + 1  ),
-.Enable(  1'b1                 ),
-.Q(       wIP_temp             )
+	.Clock(   Clock_25  ), 
+	.Reset(   Reset | rColumnEnd ),
+	.Initial( 16'b0 ),
+	.Enable(  1'b1  ),
+	.Q( wCurrentColumn )
+);
+
+UPCOUNTER_POSEDGE CurrentRow
+(
+	.Clock(   Clock_25  ), 
+	.Reset(   Reset | rRowEnd ),
+	.Initial( 16'b0 ),
+	.Enable( wCurrentColumn > 4'd0639),
+	.Q( wCurrentRow )
 );
 
 endmodule 

@@ -36,6 +36,11 @@ module TestBench;
 	wire 	oLCD_StrataFlashControl;
 	wire 	oLCD_ReadWrite;
 	wire	[3:0] oLCD_Data;
+	wire  oVGA_RED;
+	wire  oVGA_GREEN;
+	wire  oVGA_BLUE;
+	wire  oVGA_HSYNC;
+	wire  oVGA_VSYNC;
 
 	// Instantiate the Unit Under Test (UUT)
 	MiniAlu uut (
@@ -46,7 +51,12 @@ module TestBench;
 		.oLCD_RegisterSelect(oLCD_RegisterSelect),
 		.oLCD_StrataFlashControl(oLCD_StrataFlashControl),
 		.oLCD_ReadWrite(oLCD_ReadWrite),
-		.oLCD_Data(oLCD_Data)
+		.oLCD_Data(oLCD_Data),
+		.oVGA_RED(oVGA_RED),
+		.oVGA_GREEN(oVGA_GREEN),
+		.oVGA_BLUE(oVGA_BLUE),
+		.oVGA_HSYNC(oVGA_HSYNC),
+		.oVGA_VSYNC(oVGA_VSYNC)
 	);
 	
 	always

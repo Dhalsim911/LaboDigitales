@@ -34,6 +34,7 @@ wire [15:0] wSourceData0_16, wSourceData1_16;
 wire [31:0] wSourceData0,wSourceData1;
 wire [31:0] wPreSourceData0_32, wPreSourceData1_32, wSourceData0_32, wSourceData1_32, wResult32Old, wMult_LUT_Result;
 wire signed[15:0] wsSourceData0,wsSourceData1; 
+wire [23:0] wVGA_ReadAddress;
 wire wReady, Clock_25;
 
 assign wsSourceData0 = wSourceData0;
@@ -69,11 +70,20 @@ RAM_DUAL_READ_PORT DataRam
 	.oDataOut1(     wPreSourceData1 )
 );
 
-RAM_SINGLE_READ_PORT VideoRam
+VGA_CONTROLLER VideoCtrl
+(
+	.Clock_25(Clock_25),
+	.Reset(Reset),
+   .oHS(oVGA_HSYNC),
+   .oVS(oVGA_VSYNC),
+   .oVmemAddress(wVGA_ReadAddress)
+);
+
+RAM_SINGLE_READ_PORT #(3,24,640*480) VideoRam
 (
 	.Clock(         Clock        ),
 	.iWriteEnable(  rVGAWriteEnable ),
-	.iReadAddress( 24'b0 ),
+	.iReadAddress( wVGA_ReadAddress ),
 	.iWriteAddress( {wSourceData1[7:0],wSourceData0}),
 	.iDataIn( wInstruction[23:21] ),
 	.oDataOut( {oVGA_RED,oVGA_GREEN,oVGA_BLUE})
