@@ -19,9 +19,13 @@ begin
         4: oInstruction = { `CALL, 8'd7,16'b0  };
 		  5: oInstruction = { `ADD, `R3,`R3,`R1   };
 		  6: oInstruction = { `JMP, 8'd9,16'b0};
+//
 		  7: oInstruction = { `SHL, `R4,`R7,`R3};
 		  8: oInstruction = { `RET, 24'b0};
+//
 		  9: oInstruction = { `ADD, `R3,`R3,`R1   };
+		  10:oInstruction = { `LCD, `R3,`R3,`R1   };
+		  11:oInstruction = { `ADD, `R3,`R3,`R1   };
 		  /*4: oInstruction = { `STO, `R6,16'd2     };
 		  5: oInstruction = { `SMUL, `E0,`R3,`R7   };		  
         6: oInstruction = { `STO, `R5,16'd0     }; 		  

@@ -41,6 +41,8 @@ module Module_LCD_Control
 (
 input wire Clock,
 input wire Reset,
+input wire wWrite,
+input wire [7:0] wData,
 output reg wReady,
 output reg oLCD_Enabled,
 output reg oLCD_RegisterSelect, //0=Command, 1=Data
@@ -121,7 +123,7 @@ always @ ( * )
 				oLCD_Enabled = 1'b1;
 				oLCD_Data = 4'h3;
 				oLCD_RegisterSelect = 1'b0; //these are commands
-				rTimeCountReset = 1'b1;
+				//rTimeCountReset = 1'b1;
 				if (rTimeCount > 32'd11 )
 					begin
 					rTimeCountReset = 1'b1;
@@ -163,7 +165,7 @@ always @ ( * )
 			oLCD_Enabled = 1'b1;
 			oLCD_Data = 4'h3;
 			oLCD_RegisterSelect = 1'b0; //these are commands
-			rTimeCountReset = 1'b1;
+			//rTimeCountReset = 1'b1;
 			if (rTimeCount > 32'd11 )
 				begin
 				rTimeCountReset = 1'b1;
@@ -203,7 +205,7 @@ always @ ( * )
 			oLCD_Enabled = 1'b1;
 			oLCD_Data = 4'h3;
 			oLCD_RegisterSelect = 1'b0; //these are commands
-			rTimeCountReset = 1'b1;
+			//rTimeCountReset = 1'b1;
 			if (rTimeCount > 32'd11 )
 				begin
 				rTimeCountReset = 1'b1;
@@ -244,7 +246,7 @@ always @ ( * )
 			oLCD_Enabled = 1'b1;
 			oLCD_Data = 4'h2;
 			oLCD_RegisterSelect = 1'b0; //these are commands
-			rTimeCountReset = 1'b1;
+			//rTimeCountReset = 1'b1;
 			if (rTimeCount > 32'd11 )
 				begin
 				rTimeCountReset = 1'b1;
@@ -264,15 +266,14 @@ always @ ( * )
 			oLCD_Enabled = 1'b0;
 			oLCD_Data = 4'h3;
 			oLCD_RegisterSelect = 1'b0; //these are commands
+			wReady = 1'b0;
 		if (rTimeCount > 32'd2000 )
 			begin
 			rTimeCountReset = 1'b1;
-			wReady = 1'b1;
 			rNextState = `STATE_POWERON_INIT_9;
 			end
 		else
-			begin
-			wReady = 1'b0;
+			begin			
 			rTimeCountReset = 1'b0;
 			rNextState = `STATE_POWERON_INIT_8;
 			end
@@ -662,43 +663,58 @@ always @ ( * )
 			oLCD_Enabled = 1'b0;
 			oLCD_Data = 4'h3;
 			oLCD_RegisterSelect = 1'b0; //these are commands
+			wReady = 1'b0;
 		if (rTimeCount > 32'd2000 )
 			begin
-			wReady = 1'b1;
 			rTimeCountReset = 1'b1;
 			rNextState = `STATE_POWERON_INIT_29;
 			end
 		else
-			begin
-			wReady = 1'b0;
+			begin		
 			rTimeCountReset = 1'b0;
 			rNextState = `STATE_POWERON_INIT_28;
 			end
 		end	
 //------------------------------------------		
+
+//------------------------------------------
+// Waiting for write instruction
+		`STATE_POWERON_INIT_29:
+		begin
+				wReady = 1'b1;
+				oLCD_Enabled = 1'b0;
+				oLCD_Data = 4'h3;
+				oLCD_RegisterSelect = 1'b0; //these are commands
+			if (wWrite)
+				rNextState = `STATE_POWERON_INIT_30;
+			else
+				rNextState = `STATE_POWERON_INIT_29;
+		end	
+//------------------------------------------		
 // Write SF_D<11:8> = 0x01, Write Data to DD RAM, writing B
 
 // Write SF_D<11:8> = 4'b0100, pulse LCD_E High for 12 clock cycles
-	`STATE_POWERON_INIT_29:
+	`STATE_POWERON_INIT_30:
 		begin
-			wReady = 1'b0;
-			oLCD_Enabled = 1'b1;
-			oLCD_Data = 4'b0100;
-			oLCD_RegisterSelect = 1'b1; //this is data
-		if (rTimeCount > 32'd12 )
-			begin
-			rTimeCountReset = 1'b1;
-			rNextState = `STATE_POWERON_INIT_30;
-			end
-		else
-			begin
-			rTimeCountReset = 1'b0;
-			rNextState = `STATE_POWERON_INIT_29;
-			end
+				wReady = 1'b0;
+				oLCD_Enabled = 1'b1;
+				oLCD_Data = wData[7:4];
+				//oLCD_Data = 4'b0100;
+				oLCD_RegisterSelect = 1'b1; //this is data
+			if (rTimeCount > 32'd12 )
+				begin
+				rTimeCountReset = 1'b1;
+				rNextState = `STATE_POWERON_INIT_31;
+				end
+			else
+				begin
+				rTimeCountReset = 1'b0;
+				rNextState = `STATE_POWERON_INIT_30;
+				end			
 		end
 //------------------------------------------
 // Wait 1 us or longer, which is 50 clock cycles at 50 MHz.
-		`STATE_POWERON_INIT_30:
+		`STATE_POWERON_INIT_31:
 		begin
 			wReady = 1'b0;
 			oLCD_Enabled = 1'b0;
@@ -707,57 +723,39 @@ always @ ( * )
 		if (rTimeCount > 32'd50)
 			begin
 			rTimeCountReset = 1'b1;
-			rNextState = `STATE_POWERON_INIT_31;
+			rNextState = `STATE_POWERON_INIT_32;
 			end
 		else
 			begin
 			rTimeCountReset = 1'b0;
-			rNextState = `STATE_POWERON_INIT_30;
+			rNextState = `STATE_POWERON_INIT_31;
 			end
 		end
 //------------------------------------------
 // Write SF_D<11:8> = 4'b0010, pulse LCD_E High for 12 clock cycles
-	`STATE_POWERON_INIT_31:
+	`STATE_POWERON_INIT_32:
 		begin
 			wReady = 1'b0;
 			oLCD_Enabled = 1'b1;
-			oLCD_Data = 4'b0010;
+			oLCD_Data = wData[3:0];
+			//oLCD_Data = 4'b0010;
 			oLCD_RegisterSelect = 1'b1; //this is data
 		if (rTimeCount > 32'd12 )
 			begin
 			rTimeCountReset = 1'b1;
-			rNextState = `STATE_POWERON_INIT_32;
+			rNextState = `STATE_POWERON_INIT_29;
 			end
 		else
 			begin
 			rTimeCountReset = 1'b0;
-			rNextState = `STATE_POWERON_INIT_31;
+			rNextState = `STATE_POWERON_INIT_32;
 			end
 		end
 //------------------------------------------
-/* Wait 40us or longer, which is 2,000 clock cycles at 50 MHz.
-*/
-		`STATE_POWERON_INIT_32:
-		begin
-			oLCD_Enabled = 1'b0;
-			oLCD_Data = 4'h3;
-			oLCD_RegisterSelect = 1'b0; //these are commands
-		if (rTimeCount > 32'd25000000 )
-			begin
-			wReady = 1'b1;
-			rTimeCountReset = 1'b1;
-			rNextState = `STATE_POWERON_INIT_21;
-			end
-		else
-			begin
-			wReady = 1'b0;
-			rTimeCountReset = 1'b0;
-			rNextState = `STATE_POWERON_INIT_32;
-			end
-		end		
 //------------------------------------------
 		default:
 		begin
+				wReady = 1'b0;
 				oLCD_Enabled = 1'b0;
 				oLCD_Data = 4'h0;
 				oLCD_RegisterSelect = 1'b0;
