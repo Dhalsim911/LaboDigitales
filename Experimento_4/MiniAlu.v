@@ -12,11 +12,16 @@ module MiniAlu
  output wire oLCD_RegisterSelect, 
  output wire oLCD_StrataFlashControl,
  output wire oLCD_ReadWrite,
- output wire [3:0] oLCD_Data
+ output wire [3:0] oLCD_Data,
+ output wire oVGA_RED,
+ output wire oVGA_GREEN, 
+ output wire oVGA_BLUE,
+ output wire oVGA_HSYNC,
+ output wire oVGA_VSYNC
 );
 
-wire [15:0]  wIP,wIP_temp, wRetIP;
-reg         rWriteEnable,rBranchTaken, rWriteEnable32, rRET;
+wire [15:0] wIP,wIP_temp, wRetIP;
+reg         rWriteEnable,rBranchTaken, rWriteEnable32, rRET, rVGAWriteEnable;
 wire [27:0] wInstruction;
 wire [3:0]  wOperation;
 reg [15:0] rResult16;
@@ -29,7 +34,7 @@ wire [15:0] wSourceData0_16, wSourceData1_16;
 wire [31:0] wSourceData0,wSourceData1;
 wire [31:0] wPreSourceData0_32, wPreSourceData1_32, wSourceData0_32, wSourceData1_32, wResult32Old, wMult_LUT_Result;
 wire signed[15:0] wsSourceData0,wsSourceData1; 
-wire wReady;
+wire wReady, Clock_25;
 
 assign wsSourceData0 = wSourceData0;
 assign wsSourceData1 = wSourceData1;
@@ -64,6 +69,17 @@ RAM_DUAL_READ_PORT DataRam
 	.oDataOut1(     wPreSourceData1 )
 );
 
+RAM_SINGLE_READ_PORT VideoRam
+(
+	.Clock(         Clock        ),
+	.iWriteEnable(  rVGAWriteEnable ),
+	.iReadAddress( 24'b0 ),
+	.iWriteAddress( {wSourceData1[7:0],wSourceData0}),
+	.iDataIn( wInstruction[23:21] ),
+	.oDataOut( {oVGA_RED,oVGA_GREEN,oVGA_BLUE})
+);
+
+
 RAM_DUAL_READ_PORT # (32, 8, 8) DataRam32
 (
 	.Clock(         Clock        ),
@@ -76,18 +92,28 @@ RAM_DUAL_READ_PORT # (32, 8, 8) DataRam32
 	.oDataOut1(     wPreSourceData1_32 )
 );
 
+BITS_COUNTER CONT2
+(
+	.Clock(   Clock   ), 
+	.Reset(   Reset	),
+	.Initial( 2'b0  ),
+	.Enable(  1'b1  ),
+	.Q(    Clock_25   )
+);
+
+
 assign wIPInitialValue_temp = (Reset) ? 8'b0 : wDestination;
 assign wIPInitialValue = (rRET) ? rReturn : wIPInitialValue_temp;
 
-
 UPCOUNTER_POSEDGE IP
 (
-.Clock(   Clock                ), 
-.Reset(   Reset | rBranchTaken ),
-.Initial( wIPInitialValue + 1  ),
-.Enable(  1'b1                 ),
-.Q(       wIP_temp             )
+	.Clock(   Clock                ), 
+	.Reset(   Reset | rBranchTaken ),
+	.Initial( wIPInitialValue + 1  ),
+	.Enable(  1'b1                 ),
+	.Q(       wIP_temp             )
 );
+
 assign wIP = (rBranchTaken) ? wIPInitialValue : wIP_temp;
 
 FFD_POSEDGE_SYNCRONOUS_RESET # ( 4 ) FFD1 
