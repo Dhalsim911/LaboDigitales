@@ -30,7 +30,8 @@ wire [31:0] wSourceData0,wSourceData1;
 wire [31:0] wPreSourceData0_32, wPreSourceData1_32, wSourceData0_32, wSourceData1_32, wResult32Old, wMult_LUT_Result;
 wire signed[15:0] wsSourceData0,wsSourceData1; 
 wire wReady;
-
+reg rWrite;
+reg [7:0] rData;
 assign wsSourceData0 = wSourceData0;
 assign wsSourceData1 = wSourceData1;
 
@@ -44,6 +45,8 @@ ROM InstructionRom
 Module_LCD_Control LCD (
 .Clock(Clock),
 .Reset(Reset),
+.wWrite(rWrite),
+.wData(rData),
 .wReady(wReady),
 .oLCD_Enabled(oLCD_Enabled),
 .oLCD_RegisterSelect(oLCD_RegisterSelect), //0=Command, 1=Data
@@ -200,6 +203,7 @@ begin
 		rResult32      <= 0;
 		rSave <= 1'b1;
 		rRET <= 1'b0;
+		rWrite <= 0;
 	end
 	//-------------------------------------
 	`ADD:
@@ -212,6 +216,7 @@ begin
 		rResult32      <= 0;
 		rSave <= 1'b1;
 		rRET <= 1'b0;
+		rWrite <= 0;
 	end
 	//-------------------------------------
 	`STO:
@@ -224,6 +229,7 @@ begin
 		rResult32      <= 0;
 		rSave <= 1'b1;
 		rRET <= 1'b0;
+		rWrite <= 0;
 	end
 	//-------------------------------------
 	`BLE:
@@ -239,6 +245,7 @@ begin
 			rBranchTaken <= 1'b0;
 		rSave <= 1'b1;
 		rRET <= 1'b0;
+		rWrite <= 0;
 	end
 	//-------------------------------------	
 	`JMP:
@@ -251,6 +258,7 @@ begin
 		rResult32      <= 0;
 		rSave <= 1'b1;
 		rRET <= 1'b0;
+		rWrite <= 0;
 	end
 	//-------------------------------------	
 	`LED:
@@ -263,6 +271,7 @@ begin
 		rResult32      <= 0;
 		rSave <= 1'b1;
 		rRET <= 1'b0;
+		rWrite <= 0;
 	end
 	//-------------------------------------
 	`SUB:
@@ -275,6 +284,7 @@ begin
 		rResult32      <= 0;
 		rSave <= 1'b1;
 		rRET <= 1'b0;
+		rWrite <= 0;
 	end
 	//-------------------------------------
 	`SMUL:
@@ -287,6 +297,7 @@ begin
 		rResult32     <= wsSourceData1 * wsSourceData0;	//Multiplicacion con signo
 		rSave <= 1'b1;
 		rRET <= 1'b0;
+		rWrite <= 0;
 	end
 	//-------------------------------------
 	`ADD32:
@@ -299,6 +310,7 @@ begin
 		rResult32      <= wSourceData1 + wSourceData0;
 		rSave <= 1'b1;
 		rRET <= 1'b0;
+		rWrite <= 0;
 	end
 	//-------------------------------------
 	`SUB32:
@@ -311,6 +323,7 @@ begin
 		rResult32      <= wSourceData1 - wSourceData0;
 		rSave <= 1'b1;
 		rRET <= 1'b0;
+		rWrite <= 0;
 	end
 	//-------------------------------------
 	`SHL:
@@ -323,6 +336,7 @@ begin
 		rResult32      <= 0;
 		rSave <= 1'b1;
 		rRET <= 1'b0;
+		rWrite <= 0;
 	end
 	//-------------------------------------
 	`CALL:
@@ -336,6 +350,7 @@ begin
 		rReturn <= wRetIP + 1;
 		rSave <= 1'b0;
 		rRET <= 1'b0;
+		rWrite <= 0;
 		end
 	//-------------------------------------
 	`RET:
@@ -348,12 +363,32 @@ begin
 		rResult32      <= 0;
 		rSave <= 1'b1;
 		rRET <= 1'b1;
+		rWrite <= 0;
 		end
 	//-------------------------------------
-/*	`LCD:
+	`LCD:
 	begin
-		//cuando la parte 1 este lista acá se va a implementar la 2
-	end  */
+		rFFLedEN     <= 1'b1;
+		rWriteEnable <= 1'b0;
+		rWriteEnable32 <= 1'b0;
+		rResult16      <= 0;
+		rResult32      <= 0;	
+		rSave <= 1'b1;
+	//	if (wReady)
+//			begin
+			rWrite <= 1;
+			rData <= 8'b11101111;
+	//		rBranchTaken <= 1'b0;
+			rRET <= 1'b0;
+	//		end
+	//	else
+	//		begin
+		//	rWrite <= 0;
+	//		rBranchTaken <= 1'b1;
+	//		rReturn <= wRetIP;
+	//		rRET <= 1'b1;
+	//		end
+	end  
 	//-------------------------------------
 	default:
 	begin
@@ -365,6 +400,7 @@ begin
 		rBranchTaken <= 1'b0;
 		rSave <= 1'b1;
 		rRET <= 1'b0;
+		rWrite <= 0;
 	end	
 	//-------------------------------------	
 	endcase	
