@@ -73,5 +73,8 @@
 `define X 8'b01011000
 `define Y 8'b01011001
 `define Z 8'b01011010
+`define SPC 8'b11111110
+`define EQ 8'b00111101
+`define EXC 8'b00100001
 
 `endif
