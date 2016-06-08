@@ -743,7 +743,7 @@ always @ ( * )
 		if (rTimeCount > 32'd12 )
 			begin
 			rTimeCountReset = 1'b1;
-			rNextState = `STATE_POWERON_INIT_29;
+			rNextState = `STATE_POWERON_INIT_28;
 			end
 		else
 			begin

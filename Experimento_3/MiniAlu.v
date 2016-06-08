@@ -32,6 +32,9 @@ wire signed[15:0] wsSourceData0,wsSourceData1;
 wire wReady;
 reg rWrite;
 reg [7:0] rData;
+wire [7:0] wLcdData;
+
+
 assign wsSourceData0 = wSourceData0;
 assign wsSourceData1 = wSourceData1;
 
@@ -175,7 +178,14 @@ FFD_POSEDGE_SYNCRONOUS_RESET # ( 16 ) FF_RET
 	.Q(wRetIP)
 );
 
-
+FFD_POSEDGE_SYNCRONOUS_RESET # ( 8 ) FF_LCD
+(
+	.Clock(Clock),
+	.Reset(Reset),
+	.Enable(1'b1),
+	.D(wInstruction[15:8]),
+	.Q(wLcdData)
+);
 
 assign wImmediateValue = {wSourceAddr1,wSourceAddr0};
 
@@ -374,20 +384,19 @@ begin
 		rResult16      <= 0;
 		rResult32      <= 0;	
 		rSave <= 1'b1;
-	//	if (wReady)
-//			begin
-			rWrite <= 1;
-			rData <= 8'b11101111;
-	//		rBranchTaken <= 1'b0;
+		rWrite <= 1;	
+		if (wReady)
+			begin						
+			rBranchTaken <= 1'b0;
 			rRET <= 1'b0;
-	//		end
-	//	else
-	//		begin
-		//	rWrite <= 0;
-	//		rBranchTaken <= 1'b1;
-	//		rReturn <= wRetIP;
-	//		rRET <= 1'b1;
-	//		end
+			rData <= wLcdData;
+			end
+		else
+			begin
+			rBranchTaken <= 1'b1;
+			rReturn <= wRetIP;
+			rRET <= 1'b1;
+			end
 	end  
 	//-------------------------------------
 	default:
