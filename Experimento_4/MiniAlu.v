@@ -35,7 +35,10 @@ wire [31:0] wSourceData0,wSourceData1;
 wire [31:0] wPreSourceData0_32, wPreSourceData1_32, wSourceData0_32, wSourceData1_32, wResult32Old, wMult_LUT_Result;
 wire signed[15:0] wsSourceData0,wsSourceData1; 
 wire [23:0] wVGA_ReadAddress;
-wire wReady, Clock_25;
+wire wReady, wResetEnable;
+wire [3:0] NewReset_temp;
+wire NewReset;
+wire [1:0] Clock_25;
 
 assign wsSourceData0 = wSourceData0;
 assign wsSourceData1 = wSourceData1;
@@ -48,14 +51,14 @@ ROM InstructionRom
 );
 
 Module_LCD_Control LCD (
-.Clock(Clock),
-.Reset(Reset),
-.wReady(wReady),
-.oLCD_Enabled(oLCD_Enabled),
-.oLCD_RegisterSelect(oLCD_RegisterSelect), //0=Command, 1=Data
-.oLCD_StrataFlashControl(oLCD_StrataFlashControl),
-.oLCD_ReadWrite(oLCD_ReadWrite),
-.oLCD_Data(oLCD_Data)
+	.Clock(Clock),
+	.Reset(Reset),
+	.wReady(wReady),
+	.oLCD_Enabled(oLCD_Enabled),
+	.oLCD_RegisterSelect(oLCD_RegisterSelect), //0=Command, 1=Data
+	.oLCD_StrataFlashControl(oLCD_StrataFlashControl),
+	.oLCD_ReadWrite(oLCD_ReadWrite),
+	.oLCD_Data(oLCD_Data)
 );
 
 RAM_DUAL_READ_PORT DataRam
@@ -73,7 +76,7 @@ RAM_DUAL_READ_PORT DataRam
 VGA_CONTROLLER VideoCtrl
 (
 	.Clock_25(Clock_25),
-	.Reset(Reset),
+	.Reset(NewReset),
    .oHS(oVGA_HSYNC),
    .oVS(oVGA_VSYNC),
    .oVmemAddress(wVGA_ReadAddress)
@@ -102,18 +105,30 @@ RAM_DUAL_READ_PORT # (32, 8, 8) DataRam32
 	.oDataOut1(     wPreSourceData1_32 )
 );
 
-BITS_COUNTER CONT2
+UPCOUNTER_POSEDGE # ( 2 ) Clock_2
 (
-	.Clock(   Clock   ), 
-	.Reset(   Reset	),
-	.Initial( 2'b0  ),
+	.Clock(   Clock  ), 
+	.Reset(   Reset  ),
+	.Initial( 2'b00  ),
 	.Enable(  1'b1  ),
-	.Q(    Clock_25   )
+	.Q(  Clock_25  )
 );
 
 
 assign wIPInitialValue_temp = (Reset) ? 8'b0 : wDestination;
 assign wIPInitialValue = (rRET) ? rReturn : wIPInitialValue_temp;
+assign wResetEnable = ( NewReset_temp > 7 ) ? 1'b0 : 1'b1;
+
+UPCOUNTER_POSEDGE # ( 4 ) New_Reset 
+(
+	.Clock(   Clock  ), 
+	.Reset(   Reset  ),
+	.Initial( 4'b0000 ),
+	.Enable(  wResetEnable  ),
+	.Q(  NewReset_temp  )
+);
+
+assign NewReset = ((NewReset_temp <= 3) || (NewReset_temp > 7)) ? 1'b0 : 1'b1;
 
 UPCOUNTER_POSEDGE IP
 (
@@ -207,7 +222,6 @@ FFD_POSEDGE_SYNCRONOUS_RESET # ( 16 ) FF_RET
 	.D(wIP),
 	.Q(wRetIP)
 );
-
 
 
 assign wImmediateValue = {wSourceAddr1,wSourceAddr0};
