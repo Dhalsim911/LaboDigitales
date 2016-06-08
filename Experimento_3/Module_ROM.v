@@ -34,8 +34,9 @@ begin
 		  11:oInstruction = { `LCD, `R3,`N,`R1   };
 		  12:oInstruction = { `LCD, `R3,`D,`R1   };
 		  13:oInstruction = { `LCD, `R3,`O,`R1   };
-		  14:oInstruction = { `NOP, 24'd4000    	};
-		  15:oInstruction = { `JMP, 8'd14,16'b0	};
+		  14:oInstruction = { `LCD, `R3,`EXC,`R1   };
+		  15:oInstruction = { `NOP, 24'd4000    	};
+		  16:oInstruction = { `JMP, 8'd15,16'b0	};
 		  /*4: oInstruction = { `STO, `R6,16'd2     };
 		  5: oInstruction = { `SMUL, `E0,`R3,`R7   };		  
         6: oInstruction = { `STO, `R5,16'd0     }; 		  
@@ -53,7 +54,7 @@ begin
         15: oInstruction = { `SMUL ,`E0,`E0,`R6    };
         16: oInstruction = { `JMP ,  8'd6,16'b0   };*/
         default:
-                oInstruction = { `LED ,  24'b101010101010101010101010 };                //NOP
+                oInstruction = { `NOP,  24'b0	};                //NOP
         endcase
 end
 

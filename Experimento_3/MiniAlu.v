@@ -32,7 +32,6 @@ wire signed[15:0] wsSourceData0,wsSourceData1;
 wire wReady;
 reg rWrite;
 reg [7:0] rData;
-wire [7:0] wLcdData;
 
 
 assign wsSourceData0 = wSourceData0;
@@ -178,14 +177,6 @@ FFD_POSEDGE_SYNCRONOUS_RESET # ( 16 ) FF_RET
 	.Q(wRetIP)
 );
 
-FFD_POSEDGE_SYNCRONOUS_RESET # ( 8 ) FF_LCD
-(
-	.Clock(Clock),
-	.Reset(Reset),
-	.Enable(1'b1),
-	.D(wInstruction[15:8]),
-	.Q(wLcdData)
-);
 
 assign wImmediateValue = {wSourceAddr1,wSourceAddr0};
 
@@ -389,7 +380,7 @@ begin
 			begin						
 			rBranchTaken <= 1'b0;
 			rRET <= 1'b0;
-			rData <= wLcdData;
+			rData <= wSourceAddr1;
 			end
 		else
 			begin
