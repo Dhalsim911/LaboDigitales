@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
-`include "Defintions.v"
+
 
 module VGA_CONTROLLER
 (
@@ -13,7 +13,7 @@ wire [9:0] wCurrentColumn, wCurrentRow;
 UPCOUNTER_POSEDGE #(10) CurrentCol
 (
 	.Clock(  Clock_25[1]  ), 
-	.Reset( (wCurrentColumn > 639) || Reset ),
+	.Reset( (wCurrentColumn > 638) || Reset ),
 	.Initial( 16'b0 ),
 	.Enable(  1'b1  ),
 	.Q( wCurrentColumn )

@@ -1,4 +1,6 @@
 `timescale 1ns / 1ps
+`include "Defintions.v"
+
 
 `define STATE_RESET 0
 `define STATE_POWERON_INIT_0 1
