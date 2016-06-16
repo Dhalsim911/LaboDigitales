@@ -29,7 +29,7 @@ reg [31:0] rResult32;
 wire [7:0]  wSourceAddr0,wSourceAddr1,wDestination, wDestinationOld;
 wire [15:0] wPreSourceData0,wPreSourceData1, wIMult;
 reg [7:0] rReturn;
-wire [15:0] wIPInitialValue,wImmediateValue,wResult16Old,wIPInitialValue_temp;
+wire [15:0] wIPInitialValue,wImmediateValue,wResult16Old,wIPInitialValue_temp,wTemp1,wTemp2;
 wire [15:0] wSourceData0_16, wSourceData1_16;
 wire [31:0] wSourceData0,wSourceData1;
 wire [31:0] wPreSourceData0_32, wPreSourceData1_32, wSourceData0_32, wSourceData1_32, wResult32Old, wMult_LUT_Result;
@@ -79,9 +79,23 @@ VGA_CONTROLLER VideoCtrl
 	.Reset(NewReset),
    .oHS(oVGA_HSYNC),
    .oVS(oVGA_VSYNC),
-   .oVmemAddress(wVGA_ReadAddress)
+	.oR(oVGA_RED),
+	.oG(oVGA_GREEN),
+	.oB(oVGA_BLUE)
+/*	
+	.Clock(Clock),
+   .Reset(Reset),
+   .oVgaRed(oVGA_RED),
+	.oVgaGreen(oVGA_GREEN),
+	.oVgaBlue(oVGA_BLUE),
+   .oVgaVsync(oVGA_HSYNC),  //Polarity of horizontal sync pulse is negative.
+   .oVgaHsync(oVGA_VSYNC),  //Polarity of vertical sync pulse is negative.
+   .oRow(wTemp1),
+	.oCol(wTemp2)	
+	*/
+   //.oVmemAddress(wVGA_ReadAddress)
 );
-
+/*
 RAM_SINGLE_READ_PORT #(3,24,640*480) VideoRam
 (
 	.Clock(         Clock        ),
@@ -91,7 +105,7 @@ RAM_SINGLE_READ_PORT #(3,24,640*480) VideoRam
 	.iDataIn( wInstruction[23:21] ),
 	.oDataOut( {oVGA_RED,oVGA_GREEN,oVGA_BLUE})
 );
-
+*/
 
 RAM_DUAL_READ_PORT # (32, 8, 8) DataRam32
 (
