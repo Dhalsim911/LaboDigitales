@@ -29,7 +29,7 @@ reg [31:0] rResult32;
 wire [7:0]  wSourceAddr0,wSourceAddr1,wDestination, wDestinationOld;
 wire [15:0] wPreSourceData0,wPreSourceData1, wIMult;
 reg [7:0] rReturn;
-wire [15:0] wIPInitialValue,wImmediateValue,wResult16Old,wIPInitialValue_temp,wTemp1,wTemp2;
+wire [15:0] wIPInitialValue,wImmediateValue,wResult16Old,wIPInitialValue_temp;
 wire [15:0] wSourceData0_16, wSourceData1_16;
 wire [31:0] wSourceData0,wSourceData1;
 wire [31:0] wPreSourceData0_32, wPreSourceData1_32, wSourceData0_32, wSourceData1_32, wResult32Old, wMult_LUT_Result;
@@ -38,7 +38,8 @@ wire [23:0] wVGA_ReadAddress;
 wire wReady, wResetEnable;
 wire [3:0] NewReset_temp;
 wire NewReset;
-wire [1:0] Clock_25;
+wire [9:0] wV_counter,wH_counter;
+wire wClock_25;
 
 assign wsSourceData0 = wSourceData0;
 assign wsSourceData1 = wSourceData1;
@@ -72,28 +73,43 @@ RAM_DUAL_READ_PORT DataRam
 	.oDataOut0(     wPreSourceData0 ),
 	.oDataOut1(     wPreSourceData1 )
 );
+reg rflag;
+reg Reset_clock;
+always @ (posedge Clock)
+begin
+	if (rflag) begin
+		Reset_clock <= 0;
+	end
+	else begin
+		Reset_clock <= 1;
+		rflag <= 1;
+	end
+end
 
-VGA_CONTROLLER VideoCtrl
+
+UPCOUNTER_POSEDGE # ( 1 ) Slow_clock
 (
-	.Clock_25(Clock_25),
-	.Reset(NewReset),
-   .oHS(oVGA_HSYNC),
-   .oVS(oVGA_VSYNC),
-	.oR(oVGA_RED),
-	.oG(oVGA_GREEN),
-	.oB(oVGA_BLUE)
-/*	
-	.Clock(Clock),
-   .Reset(Reset),
-   .oVgaRed(oVGA_RED),
-	.oVgaGreen(oVGA_GREEN),
-	.oVgaBlue(oVGA_BLUE),
-   .oVgaVsync(oVGA_HSYNC),  //Polarity of horizontal sync pulse is negative.
-   .oVgaHsync(oVGA_VSYNC),  //Polarity of vertical sync pulse is negative.
-   .oRow(wTemp1),
-	.oCol(wTemp2)	
-	*/
-   //.oVmemAddress(wVGA_ReadAddress)
+.Clock(   Clock                ), 
+.Reset(   Reset_clock ),
+.Initial( 1'd0 ), 
+.Enable(  1'b1                 ),
+.Q(       wClock_25             )
+);
+
+
+VGA_controller VGA_controlador
+(
+	.Clock_lento(wClock_25),
+	.Reset(Reset),
+	//.iXRedCounter(wXRedCounter),
+	//.iYRedCounter(wYRedCounter),
+	//.iVGA_RGB({wVGA_R,wVGA_G,wVGA_B}),
+	//.iColorCuadro(HolyCow),
+	.oVGA_RGB({oVGA_RED, oVGA_GREEN, oVGA_BLUE}),
+	.oHsync(oVGA_HSYNC),
+	.oVsync(oVGA_VSYNC),
+	.oVcounter(wV_counter),
+	.oHcounter(wH_counter)
 );
 /*
 RAM_SINGLE_READ_PORT #(3,24,640*480) VideoRam
@@ -119,30 +135,8 @@ RAM_DUAL_READ_PORT # (32, 8, 8) DataRam32
 	.oDataOut1(     wPreSourceData1_32 )
 );
 
-UPCOUNTER_POSEDGE # ( 2 ) Clock_2
-(
-	.Clock(   Clock  ), 
-	.Reset(   Reset  ),
-	.Initial( 2'b00  ),
-	.Enable(  1'b1  ),
-	.Q(  Clock_25  )
-);
-
-
 assign wIPInitialValue_temp = (Reset) ? 8'b0 : wDestination;
 assign wIPInitialValue = (rRET) ? rReturn : wIPInitialValue_temp;
-assign wResetEnable = ( NewReset_temp > 7 ) ? 1'b0 : 1'b1;
-
-UPCOUNTER_POSEDGE # ( 4 ) New_Reset 
-(
-	.Clock(   Clock  ), 
-	.Reset(   Reset  ),
-	.Initial( 4'b0000 ),
-	.Enable(  wResetEnable  ),
-	.Q(  NewReset_temp  )
-);
-
-assign NewReset = ((NewReset_temp <= 3) || (NewReset_temp > 7)) ? 1'b0 : 1'b1;
 
 UPCOUNTER_POSEDGE IP
 (

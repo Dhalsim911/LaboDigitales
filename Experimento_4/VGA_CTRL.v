@@ -1,134 +1,61 @@
 `timescale 1ns / 1ps
 
-
-module VGA_CONTROLLER
+module VGA_controller
 (
-input wire [1:0] Clock_25,
-input wire Reset,
-output wire oHS, oVS, oR, oG, oB     //, oVmemAddress
+	input wire				Clock_lento,
+	input wire 				Reset,
+	//input wire	[2:0]		iVGA_RGB,
+	//input wire  [2:0]		iColorCuadro,
+	//input wire  [7:0]		iXRedCounter,
+	//input wire  [7:0]		iYRedCounter,
+	output wire	[2:0]		oVGA_RGB,
+	output wire				oHsync,
+	output wire				oVsync,
+	output wire [9:0]		oVcounter,
+	output wire [9:0]		oHcounter
+);
+//wire iVGA_R, iVGA_G, iVGA_B;
+wire oVGA_R, oVGA_G, oVGA_B;
+//wire wEndline;
+//wire [3:0] wMarco; //, wCuadro;
+//wire [2:0] wVGAOutputSelection;
+
+assign wMarco = 3'b0;
+//assign wCuadro = 3'b100;
+//assign wVGAOutputSelection = ( ((oHcounter >= iXRedCounter + 10'd240) && (oHcounter <= iXRedCounter + 10'd240 + 10'd32)) &&
+//										 ((oVcounter >= iYRedCounter + 10'd141) && (oVcounter <= iYRedCounter + 10'd141 + 8'd32))) ?
+//										iColorCuadro : {iVGA_R, iVGA_G, iVGA_B};
+
+//assign iVGA_R = iVGA_RGB[2];
+//assign iVGA_G = iVGA_RGB[1];
+//assign iVGA_B = iVGA_RGB[0];
+assign oVGA_RGB = {oVGA_R, oVGA_G, oVGA_B};
+
+assign oHsync = (oHcounter < 704) ? 1'b1 : 1'b0;
+assign wEndline = (oHcounter == 799);
+assign oVsync = (oVcounter < 519) ? 1'b1 : 1'b0;
+
+// Marco negro e imagen de 256*256
+assign {oVGA_R, oVGA_G, oVGA_B} = (oVcounter < 119 || oVcounter >= 419 || 
+					  oHcounter < 218 || oHcounter > 518) ? 
+					  wMarco : 3'b010; //wVGAOutputSelection;
+
+UPCOUNTER_POSEDGE # (10) HORIZONTAL_COUNTER
+(
+.Clock	(   Clock_lento   ), 
+.Reset	( (oHcounter > 799) || Reset 		),
+.Initial	( 10'b0  			),
+.Enable	(  1'b1				),
+.Q			(	oHcounter      )
 );
 
-wire [9:0] wCurrentColumn, wCurrentRow;
-
-UPCOUNTER_POSEDGE #(10) CurrentCol
+UPCOUNTER_POSEDGE # (10) VERTICAL_COUNTER
 (
-	.Clock(  Clock_25[1]  ), 
-	.Reset( (wCurrentColumn == 799) || Reset ),
-	.Initial( 16'b0 ),
-	.Enable(  1'b1  ),
-	.Q( wCurrentColumn )
+.Clock	( Clock_lento    ), 
+.Reset	( (oVcounter > 520) || Reset ),
+.Initial	( 10'b0  			),	
+.Enable	( wEndline            ),
+.Q			( oVcounter      )
 );
 
-UPCOUNTER_POSEDGE # (10) CurrentRow
-(
-	.Clock(   Clock_25[1]  ), 
-	.Reset( (wCurrentRow > 520) || Reset ),
-	.Initial( 16'b0 ),
-	.Enable( wCurrentColumn == 799),
-	.Q( wCurrentRow )
-);
-
-assign oHS = (wCurrentColumn >= 656 && wCurrentColumn <= 752) ? 0 : 1;
-assign oVS = (wCurrentRow >= 490 && wCurrentRow < 492) ? 0 : 1;
-assign oR = 1;
-assign oG = 0;
-assign oB = 1;
-
-endmodule 
-
-/* 
-module VGA_CONTROLLER
-(
-input wire Clock,
-input wire Reset,
-output wire [3:0] oVgaRed,oVgaGreen,oVgaBlue,
-output wire oVgaVsync,  //Polarity of horizontal sync pulse is negative.
-output wire oVgaHsync,  //Polarity of vertical sync pulse is negative.
-output wire [15:0]  oRow,oCol
- 
-);
- 
-wire wHSync,wVSync,wPolarity_V,wPolarity_H;
-wire wClockVga,wHCountEnd,wVCountEnd;
-wire [15:0] wHCount,wVCount;
-wire wPllLocked,wPsDone;
- 
- 
-`ifdef XILINX_IP
-DCM_SP
-#
-(
-.CLKFX_MULTIPLY(2), //Values range from 2..32
-.CLKFX_DIVIDE(CLK)        //Values range from 1..32
- 
-)
-ClockVga
-(
-.CLKIN(Clock),          //32Mhz
-.CLKFB(wClockVga),  //Feed back
-.RST( Reset ),          //Global reset
-.PSEN(1'b0),            //Disable variable phase shift. Ignore inputs to phase shifter
-.LOCKED(wPllLocked),    //Use this signal to make sure PLL is locked
-.PSDONE(wPsDone),       //I am not really using this one
-.CLKFX(wClockVga)       //FCLKFX = FCLKIN * CLKFX_MULTIPLY / CLKFX_DIVIDE
- 
-);
-`else
-    assign wClockVga = Clock;
-    assign wPllLocked = 1'b1;
-`endif
-
-
-assign wHCountEnd = (wHCount == 639)? 1'b1 : 1'b0;
-assign wVCountEnd = (wVCount == 479)  ? 1'b1 : 1'b0;
- 
-UPCOUNTER_POSEDGE # (.SIZE(16)) HCOUNT
-(
-.Clock(wClockVga),
-.Reset(Reset | ~wPllLocked | wHCountEnd),
-.Initial(16'b0),
-.Enable(1'b1),
-.Q(wHCount)
-);
- 
-UPCOUNTER_POSEDGE # (.SIZE(16)) VCOUNT
-(
-.Clock(wClockVga),
-.Reset(Reset | ~wPllLocked | wVCountEnd ),
-.Initial( 16'b0 ),
-.Enable(wHCountEnd),
-.Q(wVCount)
-);
- 
-assign wVSync =
-(
-    wVCount >= 656 &&
-    wVCount <= 752
-) ? 1'b1 : 1'b0;
- 
-assign wHSync =
-(
-    wHCount >= 490 &&
-    wHCount <= 492
-) ? 1'b1 : 1'b0;
- 
- 
-assign oVgaVsync = (wPolarity_V == 1'b1) ? wVSync : ~wVSync ;
-assign oVgaHsync = (wPolarity_H == 1'b1) ? wHSync : ~wHSync ;
- 
- 
- 
-wire[3:0] wColorR, wColorG, wColorB;
-assign wColorR = (wHCount < (640/2)) ? 4'b1111 : 4'b0000;
-assign wColorG = (wVCount < (480/2)) ? 4'b1111 : 4'b0000;
-assign wColorB = (wHCount >= (640/2) && wVCount < (640/2)) ?  4'b1111: 4'b0000;
- 
-assign {oVgaRed,oVgaGreen,oVgaBlue} = (wHCount < 640 && wVCount < 480) ?
- {wColorR,wColorG,wColorB} :    //display color
- {4'b1111,4'b0,4'b0};           //black
- 
-assign oCol = wHCount;
-assign oRow = wVCount;
- 
 endmodule
-*/

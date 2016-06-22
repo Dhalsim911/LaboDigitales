@@ -1,4 +1,3 @@
-INST "Clock_BUFGP" LOC = BUFGMUX_X1Y11;
 NET "Clock" LOC = C9;
 NET "Reset" LOC = L13;
 NET "Reset" IOSTANDARD = LVTTL;
