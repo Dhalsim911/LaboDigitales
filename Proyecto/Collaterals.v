@@ -232,3 +232,23 @@ always @ (posedge Done or posedge Reset) begin
 end
 
 endmodule 
+//--------------------
+module LFSR
+(
+input wire Clock,
+input wire Reset,
+output reg rAleatorio
+);
+
+reg [7:0] rSemilla;
+wire wXor;
+assign wXor = ~(rSemilla[2] ^ rSemilla[1]);
+	always @(posedge Clock)
+	begin
+		if (Reset)
+			rSemilla = 8'b01011001;
+		else
+		   rSemilla = {rSemilla[6:0],wXor};
+			rAleatorio <= rSemilla[6];
+	end
+endmodule
