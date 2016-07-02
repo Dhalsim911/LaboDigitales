@@ -25,7 +25,7 @@ wire [7:0]  wSourceAddr0,wSourceAddr1,wDestination;
 wire [15:0] wSourceData0,wSourceData1,wIPInitialValue,wImmediateValue;
 
 reg rVGAWriteEnable;
-wire wVGA_R, wVGA_G, wVGA_B;
+wire wVGA_R, wVGA_G, wVGA_B, wAleatorio;
 
 wire [9:0] wH_counter,wV_counter;
 wire [7:0] wH_read, wV_read;
@@ -56,6 +56,14 @@ begin
 		rflag <= 1;
 	end
 end
+
+LFSR aleatorio
+(
+.Clock (Clock),
+.Reset (Reset),
+.rAleatorio(wAleatorio)
+);
+
 
 // Instancia para crear el clock lento 
 wire wClock_counter;
