@@ -77,9 +77,20 @@ wire [2:0] wVGAOutputSelection;
 
 assign wMarco = 3'b0;
 //assign wCuadro = 3'b100;
-assign wVGAOutputSelection = ( ((oHcounter >= iXRedCounter + 10'd304) && (oHcounter <= iXRedCounter + 10'd304 + 10'd32)) &&
-										 ((oVcounter >= iYRedCounter + 10'd397) && (oVcounter <= iYRedCounter + 10'd397 + 10'd32))) ?
-										iColorCuadro : {iVGA_R, iVGA_G, iVGA_B}; //Cuadro central
+assign wVGAOutputSelection = ( 
+										 (((oHcounter >= iXRedCounter + 10'd304) && (oHcounter <= iXRedCounter + 10'd304 + 10'd32)) &&
+										 ((oVcounter >= iYRedCounter + 10'd333) && (oVcounter <= iYRedCounter + 10'd333 + 10'd32))) ||	
+										 (((oHcounter >= iXRedCounter + 10'd304) && (oHcounter <= iXRedCounter + 10'd304 + 10'd32)) &&
+										 ((oVcounter >= iYRedCounter + 10'd397) && (oVcounter <= iYRedCounter + 10'd397 + 10'd32))) ||
+										 (((oHcounter >= iXRedCounter + 10'd272) && (oHcounter <= iXRedCounter + 10'd272 + 10'd32)) &&
+										 ((oVcounter >= iYRedCounter + 10'd429) && (oVcounter <= iYRedCounter + 10'd429 + 10'd32))) ||
+										 (((oHcounter >= iXRedCounter + 10'd272) && (oHcounter <= iXRedCounter + 10'd272 + 10'd32)) &&
+										 ((oVcounter >= iYRedCounter + 10'd365) && (oVcounter <= iYRedCounter + 10'd365 + 10'd32)))||
+										 (((oHcounter >= iXRedCounter + 10'd336) && (oHcounter <= iXRedCounter + 10'd336 + 10'd32)) &&
+										 ((oVcounter >= iYRedCounter + 10'd365) && (oVcounter <= iYRedCounter + 10'd365 + 10'd32))) ||
+										 (((oHcounter >= iXRedCounter + 10'd336) && (oHcounter <= iXRedCounter + 10'd336 + 10'd32)) &&
+										 ((oVcounter >= iYRedCounter + 10'd429) && (oVcounter <= iYRedCounter + 10'd429 + 10'd32))) 
+										 ) ?	iColorCuadro : {iVGA_R, iVGA_G, iVGA_B}; //Cuadro central
 																			
 
 assign iVGA_R = iVGA_RGB[2];
@@ -180,31 +191,15 @@ always @ (posedge Done or posedge Reset) begin
 		end
 		else
 		case (ScanCode)
-			/*`W: begin
-				YRedCounter <= YRedCounter - 8'd32;
-				XRedCounter <= XRedCounter;
-				rFlagF0 <= rFlagF0;
-				ColorReg <= ColorReg;
-			end
-			
-			`S: begin
-				YRedCounter <= YRedCounter + 8'd32;
-				XRedCounter <= XRedCounter;	
-				rFlagF0 <= rFlagF0;
-				ColorReg <= ColorReg;
-			end
-			*/
 			`IZQ: begin
 				YRedCounter <= YRedCounter;
-				//XRedCounter <= XRedCounter - 9'd96;	
-				XRedCounter <= 9'd0;	
+				XRedCounter <= 9'd0;
 				rFlagF0 <= rFlagF0;
 				ColorReg <= ColorReg;
 			end
 			
 			`DER: begin
 				YRedCounter <= YRedCounter;
-				//XRedCounter <= XRedCounter + 9'd96;
 				XRedCounter <= 9'd96;
 				rFlagF0 <= rFlagF0;
 				ColorReg <= ColorReg;
@@ -214,7 +209,7 @@ always @ (posedge Done or posedge Reset) begin
 			
 			8'hF0: begin	//Señal de finalizacion del PS2
 				YRedCounter <= YRedCounter;
-				XRedCounter <= XRedCounter;				
+				XRedCounter <= XRedCounter;			
 				rFlagF0 <= 1'b1;
 				ColorReg <= ColorReg;
 			end
