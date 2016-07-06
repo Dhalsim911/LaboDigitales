@@ -44,5 +44,7 @@
 `define A 8'h1C
 `define S 8'h1B
 `define D 8'h23
+`define DER 8'h74
+`define IZQ 8'h6B
 
 `endif

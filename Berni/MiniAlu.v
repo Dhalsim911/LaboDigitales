@@ -29,13 +29,13 @@ wire wVGA_R, wVGA_G, wVGA_B;
 
 wire [9:0] wH_counter,wV_counter;
 wire [7:0] wH_read, wV_read;
-assign wH_read = (wH_counter >= 240 && wH_counter <= 496) ? (wH_counter - 240) : 8'd0;
-assign wV_read = (wV_counter >= 141 && wV_counter <= 397) ? (wV_counter - 141) : 8'd0;
+assign wH_read = (wH_counter >= 208 && wH_counter <= 528) ? (wH_counter - 208) : 8'd0;
+assign wV_read = (wV_counter >= 77 && wV_counter <= 461) ? (wV_counter - 77) : 8'd0;
 
 reg rRetCall;
 reg [7:0] rDirectionBuffer;
 wire [7:0] wRetCall;
-wire [7:0] wXRedCounter, wYRedCounter;
+wire [9:0] wXRedCounter, wYRedCounter;
 wire [3:0] HolyCow;
 
 // Definición del clock de 25 MHz
@@ -132,7 +132,7 @@ RAM_DUAL_READ_PORT # (16, 3, 8) DataRam
 );
 
 // Instancia RAM para contenido de pantalla
-RAM_SINGLE_READ_PORT # (3,16,65535) VideoMemory
+RAM_SINGLE_READ_PORT # (3,16,122879) VideoMemory
 (
 	.Clock(Clock),
 	.iWriteEnable( rVGAWriteEnable ),

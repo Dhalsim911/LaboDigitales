@@ -13,10 +13,12 @@
 `define BlackBlack 8'd72
 `define BlackWhite 8'd77
 
+/*
 `define SALTO_1 8'd5
 `define SALTO_2 8'd13
 `define SALTO_3 8'd21
 `define SALTO_4 8'd29
+*/
 
 module ROM
 (
@@ -27,24 +29,25 @@ module ROM
 always @ ( iAddress )
 begin
 	case (iAddress)
-
+	
 	0: oInstruction = { `NOP ,24'd4000       }; 
 	1: oInstruction = { `STO ,`R1, 16'd0 };	//R1 => Col
 	2: oInstruction = { `STO ,`R2, 16'd0 };	//R2 => Fil
-	3: oInstruction = { `STO ,`R7, 16'd30 };	//R7 => ADD
-	4: oInstruction = { `STO ,`R6, 16'd299 };	//End
+	3: oInstruction = { `STO ,`R7, 16'd32 };	//R7 => ADD
+	4: oInstruction = { `STO ,`R6, 16'd319 };	//EndH
+	5: oInstruction = { `STO ,`R0, 16'd383 };	//EndV
 	
-	5: oInstruction = { `STO ,`R4, 16'd29 };	//R4 => Límite Fil
-	6: oInstruction = { `CALL ,`SaveWhite, 16'd0 };	
-	7: oInstruction = { `ADD ,`R4, `R4, `R7  };
-	8: oInstruction = { `CALL ,`SaveBlack, 16'd0 };	
-	9: oInstruction = { `BGE , 8'b0, `R4, `R6  };
-	10: oInstruction = { `ADD ,`R4, `R4, `R7  };
-	11: oInstruction = { `JMP ,8'd6, 16'b0  };
+	6: oInstruction = { `STO ,`R4, 16'd31 };	//R4 => Límite Fil
+	7: oInstruction = { `CALL ,`SaveWhite, 16'd0 };	
+	8: oInstruction = { `ADD ,`R4, `R4, `R7  };
+	9: oInstruction = { `CALL ,`SaveBlack, 16'd0 };	
+	10: oInstruction = { `BGE , 8'b0, `R4, `R0  };
+	11: oInstruction = { `ADD ,`R4, `R4, `R7  };
+	12: oInstruction = { `JMP ,8'd7, 16'b0  };
 	
 		//TAG SaveWhite
 	50: oInstruction = { `STO ,`R1, 16'd0 };	//R1 => Col
-	51: oInstruction = { `STO ,`R3, 16'd29 };	//R3 => Límite Col
+	51: oInstruction = { `STO ,`R3, 16'd31 };	//R3 => Límite Col
 		//TAG WhiteWhite
 	52: oInstruction = { `VGA ,`COLOR_WHITE, `R1, `R2  };
 	53: oInstruction = { `INC ,`R1, `R1, 8'd0  };
@@ -65,7 +68,7 @@ begin
 
 		//TAG SaveBlack
 	70: oInstruction = { `STO ,`R1, 16'd0 };	//R1 => Col
-	71: oInstruction = { `STO ,`R3, 16'd29 };	//R3 => Límite Col
+	71: oInstruction = { `STO ,`R3, 16'd31 };	//R3 => Límite Col
 		//TAG BlackBlack
 	72: oInstruction = { `VGA ,`COLOR_BLACK, `R1, `R2  };
 	73: oInstruction = { `INC ,`R1, `R1, 8'd0  };
@@ -84,7 +87,7 @@ begin
 	85: oInstruction = { `BLE ,`SaveBlack, `R2, `R4  };	
 	86: oInstruction = { `RET ,24'd0 };	
 
-/*Rutina para imprimir 4 franjas en pantalla
+/* Rutina para imprimir 4 franjas en pantalla
 
 	0: oInstruction = { `NOP ,24'd4000       }; 
 	1: oInstruction = { `STO ,`R4, 16'd63 };	//R4 => Limite Col
