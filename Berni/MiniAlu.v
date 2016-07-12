@@ -119,7 +119,7 @@ ROM InstructionRom
 );
 
 // Instancia RAM de instrucciones y registros
-RAM_DUAL_READ_PORT # (16, 3, 8) DataRam
+RAM_DUAL_READ_PORT # (16, 4, 8) DataRam
 (
 	.Clock(         Clock        ),
 	.iWriteEnable(  rWriteEnable ),

@@ -1,5 +1,5 @@
-//Mauricio JosÃ© Valverde Monge A76674
-//Francisco AndrÃ©s Vargas Piedra A76821
+//Mauricio José Valverde Monge A76674
+//Francisco Andrés Vargas Piedra A76821
 //Module_ROM.v Modificado para Laboratorio de Circuitos Digitales I
 
 `timescale 1ns / 1ps
@@ -9,16 +9,6 @@
 `define WhiteWhite 8'd52
 `define WhiteBlack 8'd57
 
-`define SaveBlack 8'd70
-`define BlackBlack 8'd72
-`define BlackWhite 8'd77
-
-/*
-`define SALTO_1 8'd5
-`define SALTO_2 8'd13
-`define SALTO_3 8'd21
-`define SALTO_4 8'd29
-*/
 
 module ROM
 (
@@ -34,113 +24,75 @@ begin
 	1: oInstruction = { `STO ,`R1, 16'd0 };	//R1 => Col
 	2: oInstruction = { `STO ,`R2, 16'd0 };	//R2 => Fil
 	3: oInstruction = { `STO ,`R7, 16'd32 };	//R7 => ADD
-	4: oInstruction = { `STO ,`R6, 16'd319 };	//EndH
+	4: oInstruction = { `STO ,`R6, 16'd255 };	//EndH
 	5: oInstruction = { `STO ,`R0, 16'd383 };	//EndV
+	6: oInstruction = { `STO ,`R5, 16'd192};	
+	7: oInstruction = { `STO ,`R8, 16'd192};	
 	
-	6: oInstruction = { `STO ,`R4, 16'd31 };	//R4 => LÃ­mite Fil
-	7: oInstruction = { `CALL ,`SaveWhite, 16'd0 };	
-	8: oInstruction = { `ADD ,`R4, `R4, `R7  };
-	9: oInstruction = { `CALL ,`SaveBlack, 16'd0 };	
-	10: oInstruction = { `BGE , 8'b0, `R4, `R0  };
-	11: oInstruction = { `ADD ,`R4, `R4, `R7  };
-	12: oInstruction = { `JMP ,8'd7, 16'b0  };
-	
-		//TAG SaveWhite
-	50: oInstruction = { `STO ,`R1, 16'd0 };	//R1 => Col
-	51: oInstruction = { `STO ,`R3, 16'd31 };	//R3 => LÃ­mite Col
-		//TAG WhiteWhite
-	52: oInstruction = { `VGA ,`COLOR_WHITE, `R1, `R2  };
-	53: oInstruction = { `INC ,`R1, `R1, 8'd0  };
-	54: oInstruction = { `NOP ,24'd4000       }; 
-	55: oInstruction = { `BLE ,`WhiteWhite, `R1, `R3  };
-	56: oInstruction = { `ADD ,`R3, `R3, `R7  };
-		//TAG WhiteBlack
-	57: oInstruction = { `VGA ,`COLOR_BLACK, `R1, `R2  };
-	58: oInstruction = { `INC ,`R1, `R1, 8'd0  };
-	59: oInstruction = { `NOP ,24'd4000       }; 
-	60: oInstruction = { `BLE ,`WhiteBlack, `R1, `R3  };
-	61: oInstruction = { `ADD ,`R3, `R3, `R7  };
-	62: oInstruction = { `BLE ,`WhiteWhite, `R1, `R6  };
-	63: oInstruction = { `INC ,`R2, `R2, 8'd0  };
-	64: oInstruction = { `NOP ,24'd4000       }; 
-	65: oInstruction = { `BLE ,`SaveWhite, `R2, `R4  };	
-	66: oInstruction = { `RET ,24'd0 };	
-
-		//TAG SaveBlack
-	70: oInstruction = { `STO ,`R1, 16'd0 };	//R1 => Col
-	71: oInstruction = { `STO ,`R3, 16'd31 };	//R3 => LÃ­mite Col
-		//TAG BlackBlack
-	72: oInstruction = { `VGA ,`COLOR_BLACK, `R1, `R2  };
-	73: oInstruction = { `INC ,`R1, `R1, 8'd0  };
-	74: oInstruction = { `NOP ,24'd4000       }; 
-	75: oInstruction = { `BLE ,`BlackBlack, `R1, `R3  };
-	76: oInstruction = { `ADD ,`R3, `R3, `R7  };
-		//TAG BlackWhite
-	77: oInstruction = { `VGA ,`COLOR_WHITE, `R1, `R2  };
-	78: oInstruction = { `INC ,`R1, `R1, 8'd0  };
-	79: oInstruction = { `NOP ,24'd4000       }; 
-	80: oInstruction = { `BLE ,`BlackWhite, `R1, `R3  };
-	81: oInstruction = { `ADD ,`R3, `R3, `R7  };
-	82: oInstruction = { `BLE ,`BlackBlack, `R1, `R6  };
-	83: oInstruction = { `INC ,`R2, `R2, 8'd0  };
-	84: oInstruction = { `NOP ,24'd4000       }; 
-	85: oInstruction = { `BLE ,`SaveBlack, `R2, `R4  };	
-	86: oInstruction = { `RET ,24'd0 };	
-
-/* Rutina para imprimir 4 franjas en pantalla
-
-	0: oInstruction = { `NOP ,24'd4000       }; 
-	1: oInstruction = { `STO ,`R4, 16'd63 };	//R4 => Limite Col
-	2: oInstruction = { `STO ,`R5, 16'd255 };	//R5 => Limite Fil
-
-	3: oInstruction = { `STO ,`R7, 16'd0 };	//R7 => Fil 	Registros en donde se elige donde escribir en RAM, y la posiciÃ³n en pantalla.
-	4: oInstruction = { `STO ,`R6, 16'd0 };	//R8 => Col
-	// Salto_1
-	5: oInstruction = { `VGA ,`COLOR_BLUE, `R7, `R6  };
-	6: oInstruction = { `INC, `R7, `R7, 8'd0 };
-	7: oInstruction = { `BLE, `SALTO_1, `R7, `R5 };	
-	8: oInstruction = { `STO ,`R7, 16'd0 };	
-	9: oInstruction = { `INC, `R6, `R6, 8'd0 };
-	10: oInstruction = { `BLE, `SALTO_1, `R6, `R4 };
-
-	11: oInstruction = { `STO ,`R7, 16'd0 };	//R7 => Fil
-	12: oInstruction = { `STO ,`R4, 16'd127 };	//R4 => Limite Col
-	// Salto_2
-	13: oInstruction = { `VGA ,`COLOR_RED, `R7, `R6  };
-	14: oInstruction = { `INC, `R7, `R7, 8'd0 };
-	15: oInstruction = { `BLE, `SALTO_2, `R7, `R5 };	
-	16: oInstruction = { `STO ,`R7, 16'd0 };	
-	17: oInstruction = { `INC, `R6, `R6, 8'd0 };
-	18: oInstruction = { `BLE, `SALTO_2, `R6, `R4 };	
-	
-	19: oInstruction = { `STO ,`R7, 16'd0 };	//R7 => Fil
-	20: oInstruction = { `STO ,`R4, 16'd191 };	//R4 => Limite Col
-	// Salto_3
-	21: oInstruction = { `VGA ,`COLOR_MAGENTA, `R7, `R6  };
-	22: oInstruction = { `INC, `R7, `R7, 8'd0 };
-	23: oInstruction = { `BLE, `SALTO_3, `R7, `R5 };	
-	24: oInstruction = { `STO ,`R7, 16'd0 };	
-	25: oInstruction = { `INC, `R6, `R6, 8'd0 };
-	26: oInstruction = { `BLE, `SALTO_3, `R6, `R4 };	
-	
-	27: oInstruction = { `STO ,`R7, 16'd0 };	//R7 => Fil
-	28: oInstruction = { `STO ,`R4, 16'd255 };	//R4 => Limite Col
-	// Salto_4
-	29: oInstruction = { `VGA, `COLOR_WHITE, `R7, `R6  };
-	30: oInstruction = { `INC, `R7, `R7, 8'd0 };
-	31: oInstruction = { `BLE, `SALTO_4, `R7, `R5 };	
-	32: oInstruction = { `STO ,`R7, 16'd0 };	
-	33: oInstruction = { `INC, `R6, `R6, 8'd0 };
-	34: oInstruction = { `BLE, `SALTO_4, `R6, `R5 };		
-	35: oInstruction = { `JMP, 8'd35, 16'b0 };
-
+	8: oInstruction = { `STO ,`R4, 16'd31 };	//R4 => Límite Fil
+	9: oInstruction = { `CALL ,8'd25, 16'd0 };	
+	10: oInstruction = { `ADD ,`R4, `R4, `R7  };
+	11: oInstruction = { `CALL ,8'd100, 16'd0 };	
+	12: oInstruction = { `BGE , 8'b0, `R4, `R0  };
+	13: oInstruction = { `ADD ,`R4, `R4, `R7  };
+	14: oInstruction = { `JMP ,8'd9, 16'b0  };
 	
 	
-	50: oInstruction = { `INC, `R7, `R7, 8'd0 };
-	51: oInstruction = { `NOP ,24'd4000       }; 
-	52: oInstruction = { `VGA ,`COLOR_BLUE, `R7, `R7  };	
-	53: oInstruction = { `NOP ,24'd4000       };
-*/
+	25: oInstruction = { `STO ,`R1, 16'd0 };	//R1 => Col
+	26: oInstruction = { `STO ,`R3, 16'd31 };	//R3 => Límite Col
+	27: oInstruction = { `VGA ,`COLOR_YELLOW, `R1, `R2  };
+	28: oInstruction = { `INC ,`R1, `R1, 8'd0  };
+	29: oInstruction = { `NOP ,24'd4000       }; 
+	30: oInstruction = { `BLE ,8'd27, `R1, `R3  };
+	31: oInstruction = { `ADD ,`R3, `R3, `R5  };
+	32: oInstruction = { `VGA ,`COLOR_WHITE, `R1, `R2  };
+	33: oInstruction = { `INC ,`R1, `R1, 8'd0  };
+	34: oInstruction = { `NOP ,24'd4000       }; 
+	35: oInstruction = { `BLE ,8'd32, `R1, `R3  };
+	36: oInstruction = { `VGA ,`COLOR_YELLOW, `R1, `R2  };
+	37: oInstruction = { `INC ,`R1, `R1, 8'd0  };
+	38: oInstruction = { `NOP ,24'd4000       }; 
+	39: oInstruction = { `BLE ,8'd36, `R1, `R6  };
+	40: oInstruction = { `INC ,`R2, `R2, 8'd0  };
+	41: oInstruction = { `NOP ,24'd4000       }; 
+	42: oInstruction = { `BLE ,8'd25, `R2, `R4  };	
+	43: oInstruction = { `RET ,24'd0 };	
+		
+		
+	60: oInstruction = { `STO ,`R8, 16'd5000 };	//R1 => Col
+	61: oInstruction = { `STO ,`R9, 16'd2000 };	//R3 => Límite Col
+	62: oInstruction = { `STO ,`R11, 16'd0 };	//R1 => Col	
+	63: oInstruction = { `STO ,`R10, 16'd0 };	//R3 => Límite Col
+	64: oInstruction = { `INC ,`R10, `R10, 8'd0  };
+	65: oInstruction = { `BLE ,8'd63,`R10,`R8 };//**********
+	66: oInstruction = { `INC ,`R11, `R11, 8'd0  };
+	67: oInstruction = { `BLE ,8'd63,`R11,`R9 };//**********
+	68: oInstruction = { `RET ,24'd0 };	
+	
+	
+	100: oInstruction = { `STO ,`R1, 16'd0 };	//R1 => Col
+	101: oInstruction = { `STO ,`R3, 16'd31 };	//R3 => Límite Col
+	102: oInstruction = { `VGA ,`COLOR_BLUE, `R1, `R2  };
+	103: oInstruction = { `INC ,`R1, `R1, 8'd0  };
+	104: oInstruction = { `NOP ,24'd4000       }; 
+	105: oInstruction = { `BLE ,8'd102, `R1, `R3  };
+	106: oInstruction = { `ADD ,`R3, `R3, `R5  };
+	107: oInstruction = { `VGA ,`COLOR_WHITE, `R1, `R2  };
+	108: oInstruction = { `INC ,`R1, `R1, 8'd0  };
+	109: oInstruction = { `NOP ,24'd4000       }; 
+	110: oInstruction = { `BLE ,8'd107, `R1, `R3  };
+	111: oInstruction = { `VGA ,`COLOR_BLUE, `R1, `R2  };
+	112: oInstruction = { `INC ,`R1, `R1, 8'd0  };
+	113: oInstruction = { `NOP ,24'd4000       }; 
+	114: oInstruction = { `BLE ,8'd111, `R1, `R6  };
+	115: oInstruction = { `INC ,`R2, `R2, 8'd0  };
+	116: oInstruction = { `NOP ,24'd4000       }; 
+	117: oInstruction = { `BLE ,8'd100, `R2, `R4  };	
+	118: oInstruction = { `RET ,24'd0 };	
+	
+	
+	
+	
 
 	default:
 		oInstruction = { `NOP ,24'd4000       };		//NOP
