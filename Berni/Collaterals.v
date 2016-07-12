@@ -1,11 +1,11 @@
-//Mauricio JosÃ© Valverde Monge A76674
-//Francisco AndrÃ©s Vargas Piedra A76821
+//Mauricio José Valverde Monge A76674
+//Francisco Andrés Vargas Piedra A76821
 //Collaterals.v Modificado para Laboratorio de Circuitos Digitales I
 
 `timescale 1ns / 1ps
 
 //------------------------------------------------
-// MÃ³dulo del contador que se incrementa en 1 para 
+// Módulo del contador que se incrementa en 1 para 
 // llevar el orden de las instrucciones a ejecutar.
 module UPCOUNTER_POSEDGE # (parameter SIZE=16)
 (
@@ -30,7 +30,7 @@ output reg [SIZE-1:0] Q
 
 endmodule
 //----------------------------------------------------
-// MÃ³dulo de un flip-flop D de flanco positivo 
+// Módulo de un flip-flop D de flanco positivo 
 module FFD_POSEDGE_SYNCRONOUS_RESET # ( parameter SIZE=8 )
 (
 	input wire				Clock,
@@ -54,7 +54,7 @@ end//always
 
 endmodule
 //----------------------------------------------------------------------
-// MÃ³dulo VGA controller
+// Módulo VGA controller
 module VGA_controller
 (
 	input wire				Clock_lento,
@@ -78,18 +78,18 @@ wire [2:0] wVGAOutputSelection;
 assign wMarco = 3'b0;
 //assign wCuadro = 3'b100;
 assign wVGAOutputSelection = ( 
-										 (((oHcounter >= iXRedCounter + 10'd304) && (oHcounter <= iXRedCounter + 10'd304 + 10'd32)) &&
-										 ((oVcounter >= iYRedCounter + 10'd333) && (oVcounter <= iYRedCounter + 10'd333 + 10'd32))) ||	
-										 (((oHcounter >= iXRedCounter + 10'd304) && (oHcounter <= iXRedCounter + 10'd304 + 10'd32)) &&
-										 ((oVcounter >= iYRedCounter + 10'd397) && (oVcounter <= iYRedCounter + 10'd397 + 10'd32))) ||
-										 (((oHcounter >= iXRedCounter + 10'd272) && (oHcounter <= iXRedCounter + 10'd272 + 10'd32)) &&
-										 ((oVcounter >= iYRedCounter + 10'd429) && (oVcounter <= iYRedCounter + 10'd429 + 10'd32))) ||
-										 (((oHcounter >= iXRedCounter + 10'd272) && (oHcounter <= iXRedCounter + 10'd272 + 10'd32)) &&
-										 ((oVcounter >= iYRedCounter + 10'd365) && (oVcounter <= iYRedCounter + 10'd365 + 10'd32)))||
-										 (((oHcounter >= iXRedCounter + 10'd336) && (oHcounter <= iXRedCounter + 10'd336 + 10'd32)) &&
-										 ((oVcounter >= iYRedCounter + 10'd365) && (oVcounter <= iYRedCounter + 10'd365 + 10'd32))) ||
-										 (((oHcounter >= iXRedCounter + 10'd336) && (oHcounter <= iXRedCounter + 10'd336 + 10'd32)) &&
-										 ((oVcounter >= iYRedCounter + 10'd429) && (oVcounter <= iYRedCounter + 10'd429 + 10'd32))) 
+										 (((oHcounter >= iXRedCounter + 10'd272) && (oHcounter <= iXRedCounter + 10'd272 + 10'd31)) &&
+										 ((oVcounter >= iYRedCounter + 10'd333) && (oVcounter <= iYRedCounter + 10'd333 + 10'd31))) ||	
+										 (((oHcounter >= iXRedCounter + 10'd272) && (oHcounter <= iXRedCounter + 10'd272 + 10'd31)) &&
+										 ((oVcounter >= iYRedCounter + 10'd397) && (oVcounter <= iYRedCounter + 10'd397 + 10'd31))) ||
+										 (((oHcounter >= iXRedCounter + 10'd240) && (oHcounter <= iXRedCounter + 10'd240 + 10'd31)) &&
+										 ((oVcounter >= iYRedCounter + 10'd429) && (oVcounter <= iYRedCounter + 10'd429 + 10'd31))) ||
+										 (((oHcounter >= iXRedCounter + 10'd240) && (oHcounter <= iXRedCounter + 10'd240 + 10'd31)) &&
+										 ((oVcounter >= iYRedCounter + 10'd365) && (oVcounter <= iYRedCounter + 10'd365 + 10'd31)))||
+										 (((oHcounter >= iXRedCounter + 10'd304) && (oHcounter <= iXRedCounter + 10'd304 + 10'd31)) &&
+										 ((oVcounter >= iYRedCounter + 10'd365) && (oVcounter <= iYRedCounter + 10'd365 + 10'd31))) ||
+										 (((oHcounter >= iXRedCounter + 10'd304) && (oHcounter <= iXRedCounter + 10'd304 + 10'd31)) &&
+										 ((oVcounter >= iYRedCounter + 10'd429) && (oVcounter <= iYRedCounter + 10'd429 + 10'd31))) 
 										 ) ?	iColorCuadro : {iVGA_R, iVGA_G, iVGA_B}; //Cuadro central
 																			
 
@@ -100,11 +100,11 @@ assign oVGA_RGB = {oVGA_R, oVGA_G, oVGA_B};
 
 assign oHsync = (oHcounter < 704) ? 1'b1 : 1'b0;
 assign wEndline = (oHcounter == 799);
-assign oVsync = (oVcounter < 519) ? 1'b1 : 1'b0;
+assign oVsync = (oVcounter < 528) ? 1'b1 : 1'b0;
 
 // Marco negro e imagen de 320*384
 assign {oVGA_R, oVGA_G, oVGA_B} = (oVcounter < 77 || oVcounter >= 461 || 
-					  oHcounter < 208 || oHcounter > 528) ? 
+					  oHcounter < 208 || oHcounter > 464) ? 
 					  wMarco : wVGAOutputSelection;
 
 UPCOUNTER_POSEDGE # (10) HORIZONTAL_COUNTER
@@ -119,7 +119,7 @@ UPCOUNTER_POSEDGE # (10) HORIZONTAL_COUNTER
 UPCOUNTER_POSEDGE # (10) VERTICAL_COUNTER
 (
 .Clock	( Clock_lento    ), 
-.Reset	( (oVcounter > 520) || Reset ),
+.Reset	( (oVcounter > 528) || Reset ),
 .Initial	( 10'b0  			),	
 .Enable	( wEndline            ),
 .Q			( oVcounter      )
@@ -127,7 +127,7 @@ UPCOUNTER_POSEDGE # (10) VERTICAL_COUNTER
 
 endmodule
 //----------------------------------------------------------------------
-// MÃ³dulo PS2 controller
+// Módulo PS2 controller
 module PS2_Controller 
 (
 	input wire Reset,
@@ -193,21 +193,21 @@ always @ (posedge Done or posedge Reset) begin
 		case (ScanCode)
 			`IZQ: begin
 				YRedCounter <= YRedCounter;
-				XRedCounter <= 9'd0;
+				XRedCounter <= 10'd0;
 				rFlagF0 <= rFlagF0;
 				ColorReg <= ColorReg;
 			end
 			
 			`DER: begin
 				YRedCounter <= YRedCounter;
-				XRedCounter <= 9'd96;
+				XRedCounter <= 10'd96;
 				rFlagF0 <= rFlagF0;
 				ColorReg <= ColorReg;
 			end
 			
 			
 			
-			8'hF0: begin	//SeÃ±al de finalizacion del PS2
+			8'hF0: begin	//Señal de finalizacion del PS2
 				YRedCounter <= YRedCounter;
 				XRedCounter <= XRedCounter;			
 				rFlagF0 <= 1'b1;
