@@ -74,9 +74,40 @@ wire oVGA_R, oVGA_G, oVGA_B;
 wire wEndline;
 wire [3:0] wMarco; //, wCuadro;
 wire [2:0] wVGAOutputSelection;
-
+reg [9:0] puntero1, puntero2;
+reg [23:0] contador1, contador2;
 assign wMarco = 3'b0;
 //assign wCuadro = 3'b100;
+
+initial begin
+	puntero1 <= 10'b0;
+	puntero2 <= 10'd96;
+	contador1 <= 24'b0;
+	contador2 <= 24'b0;
+end
+
+always @ (posedge Clock_lento ) begin
+	if (contador1 >= 23'd45000000) begin
+		puntero1 <= puntero1 + 10'd32;
+		puntero2 <= puntero2;
+		contador1 <= 24'b0;
+		contador2 <= contador2;
+		end
+	else if (contador2 >= 23'd40000000) begin
+		puntero2 <= puntero2 + 10'd32;
+		puntero1 <= puntero1;
+		contador1 <= contador1;
+		contador2 <= 24'b0;
+		end 
+	else begin
+		puntero1 <= puntero1;
+		puntero2 <= puntero2;
+		contador1 <= contador1 + 24'b1;
+		contador2 <= contador2 + 24'b1;
+		end
+end
+
+
 assign wVGAOutputSelection = ( 
 										 (((oHcounter >= iXRedCounter + 10'd272) && (oHcounter <= iXRedCounter + 10'd272 + 10'd31)) &&
 										 ((oVcounter >= iYRedCounter + 10'd333) && (oVcounter <= iYRedCounter + 10'd333 + 10'd31))) ||	
@@ -89,7 +120,11 @@ assign wVGAOutputSelection = (
 										 (((oHcounter >= iXRedCounter + 10'd304) && (oHcounter <= iXRedCounter + 10'd304 + 10'd31)) &&
 										 ((oVcounter >= iYRedCounter + 10'd365) && (oVcounter <= iYRedCounter + 10'd365 + 10'd31))) ||
 										 (((oHcounter >= iXRedCounter + 10'd304) && (oHcounter <= iXRedCounter + 10'd304 + 10'd31)) &&
-										 ((oVcounter >= iYRedCounter + 10'd429) && (oVcounter <= iYRedCounter + 10'd429 + 10'd31))) 
+										 ((oVcounter >= iYRedCounter + 10'd429) && (oVcounter <= iYRedCounter + 10'd429 + 10'd31))) ||
+										 (((oHcounter >= 10'd272) && (oHcounter <= 10'd272 + 10'd31)) &&
+										 ((oVcounter >= 10'd77 + puntero1) && (oVcounter <= 10'd77 + puntero1 + 10'd31))) ||
+										 (((oHcounter >= 10'd368) && (oHcounter <= 10'd368 + 10'd31)) &&
+										 ((oVcounter >= 10'd77 + puntero2) && (oVcounter <= 10'd77 + puntero2 + 10'd31))) 
 										 ) ?	iColorCuadro : {iVGA_R, iVGA_G, iVGA_B}; //Cuadro central
 																			
 
